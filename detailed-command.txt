@@ -1,0 +1,852 @@
+I'm building a social voice-room mobile app (React Native, TypeScript, 
+Firebase + Agora RTC). Full spec is attached/pasted below.
+
+STEP 1 — AUDIT ONLY. Do not write or change any code yet.
+Inspect the current project and report back:
+- package.json — existing dependencies, RN version, New Architecture 
+  (Fabric/TurboModules) on or off
+- Existing Firebase setup (config files, initialized services)
+- Existing Google Sign-In setup, if any
+- Whether Agora SDK is already installed and which version
+- Existing navigation library and state management approach
+- Existing UI theme/component structure
+- Any existing screens that overlap with the spec's screen list
+- Gaps between what exists and what the spec requires
+
+STEP 2 — PLAN.
+Based on the audit, propose:
+- Which state management + navigation libraries you'll use (if not 
+  already decided in the project)
+- Firestore composite indexes you expect to need
+- Confirmation that Firebase project is on the Blaze plan (Cloud 
+  Functions require it) — flag if it isn't
+- The implementation order you'll follow (use the spec's section 25 
+  order unless you have a reason to deviate — explain if so)
+
+Stop and show me the plan before writing code. I'll confirm before 
+you proceed to implementation.
+
+STEP 3 — IMPLEMENT, ONE FEATURE AT A TIME.
+Follow the spec's build order. After each feature (e.g. "Google auth", 
+"room creation"), stop, summarize what was built, and let me test 
+before moving to the next one. Do not batch multiple major features 
+into one pass.
+
+Rules to follow throughout:
+- Never put secrets (Agora App Certificate, service account keys) in 
+  the React Native app — server-side only, in Cloud Functions
+- All wallet/gift/challenge-reward writes go through Cloud Functions, 
+  never direct client writes
+- Firestore security rules must enforce role permissions, not just 
+  frontend checks
+- Clean up all Firestore listeners on unmount
+- Use pagination for chat and any large collections
+- Keep Firebase/Agora calls inside a service layer, not scattered in 
+  screens
+
+
+
+Build a standalone social voice-room mobile app inspired by the general concept of a “Mehfil” social community, but create completely original branding, UI, assets, and implementation.
+
+The app should NOT copy Ludo Titan or Mehfil's branding, assets, exact UI, or copyrighted designs.
+
+## 1. AUTHENTICATION
+
+For the MVP, use **Google Sign-In only**.
+
+Do NOT implement:
+
+* Phone authentication
+* Email/password
+* OTP
+* Forgot password
+
+Use:
+
+```text
+React Native
+    ↓
+Google Sign-In
+    ↓
+Firebase Authentication
+    ↓
+Firestore User Profile
+```
+
+On first Google login:
+
+* Create the Firebase user automatically.
+* Create a Firestore user document.
+* Store:
+
+  * uid
+  * name
+  * email
+  * profilePhoto
+  * username
+  * createdAt
+  * updatedAt
+  * level
+  * coins
+  * status
+
+Use Firebase Auth as the source of authentication truth.
+
+Handle:
+
+* Login loading
+* Login errors
+* Cancelled login
+* Logout
+* Persistent session
+
+## 2. BACKEND — FIREBASE
+
+Use **Firebase as the complete backend** for the MVP.
+
+Do NOT create:
+
+* Node/NestJS backend
+* PostgreSQL
+* Prisma
+* Socket.IO
+* Redis
+
+Use:
+
+* Firebase Authentication
+* Cloud Firestore
+* Firebase Cloud Functions
+* Firebase Storage
+* Firebase Cloud Messaging
+* Firebase App Check where appropriate
+
+Architecture:
+
+```text
+React Native
+    │
+    ├── Firebase Auth
+    │       └── Google Login
+    │
+    ├── Firestore
+    │       ├── Users
+    │       ├── Rooms
+    │       ├── Members
+    │       ├── Messages
+    │       ├── Gifts
+    │       ├── Challenges
+    │       └── Notifications
+    │
+    ├── Cloud Functions
+    │       ├── Secure business logic
+    │       ├── Wallet transactions
+    │       ├── Gift processing
+    │       ├── Agora token generation
+    │       └── Notifications
+    │
+    ├── Firebase Storage
+    │       └── Images/assets
+    │
+    └── Firebase Cloud Messaging
+            └── Push notifications
+```
+
+## 3. FIRESTORE DATA MODEL
+
+Create a clean Firestore structure.
+
+Recommended collections:
+
+```text
+users
+rooms
+rooms/{roomId}/members
+rooms/{roomId}/messages
+friendRequests
+follows
+notifications
+gifts
+walletTransactions
+challenges
+userChallenges
+reports
+blocks
+roomBans
+```
+
+User document:
+
+```text
+users/{uid}
+```
+
+Fields:
+
+```text
+uid
+name
+username
+email
+profilePhoto
+bio
+level
+coins
+followersCount
+followingCount
+friendsCount
+createdAt
+updatedAt
+isOnline
+lastSeen
+```
+
+Room document:
+
+```text
+rooms/{roomId}
+```
+
+Fields:
+
+```text
+id
+name
+description
+coverImage
+category
+ownerId
+maxMembers
+memberCount
+isPrivate
+isActive
+createdAt
+updatedAt
+```
+
+Member document:
+
+```text
+rooms/{roomId}/members/{uid}
+```
+
+Fields:
+
+```text
+uid
+role
+isMuted
+isSpeaking
+joinedAt
+lastActiveAt
+```
+
+Roles:
+
+```text
+owner
+admin
+moderator
+speaker
+listener
+```
+
+## 4. REALTIME
+
+Use **Cloud Firestore realtime listeners** instead of Socket.IO.
+
+Realtime features:
+
+* Room members
+* Chat messages
+* Online presence
+* Room updates
+* Speaker status
+* Raise-hand requests
+* Gifts
+* Notifications
+
+Do not create unnecessary custom WebSocket infrastructure.
+
+Use Firestore listeners carefully and clean them up when screens unmount.
+
+Optimize listeners to avoid unnecessary reads and costs.
+
+## 5. VOICE — AGORA RTC
+
+Use **Agora RTC** for actual live voice communication.
+
+Do NOT build raw WebRTC infrastructure for the MVP.
+
+Each Firestore room maps to an Agora channel.
+
+Example:
+
+```text
+Firestore Room ID:
+abc123
+
+Agora Channel:
+abc123
+```
+
+Flow:
+
+```text
+React Native
+     ↓
+Cloud Function
+     ↓
+Generate Agora RTC Token
+     ↓
+React Native
+     ↓
+Agora RTC
+     ↓
+Live Voice Room
+```
+
+IMPORTANT:
+
+Never expose the Agora App Certificate in React Native.
+
+The Agora App Certificate must only exist in Firebase Cloud Functions/server-side environment.
+
+Create a secure Cloud Function that:
+
+1. Verifies Firebase authentication.
+2. Checks that the user belongs to the room.
+3. Generates a short-lived Agora RTC token.
+4. Returns the token and channel information.
+
+## 6. VOICE FEATURES
+
+Implement real voice functionality:
+
+* Join voice room
+* Leave voice room
+* Microphone on/off
+* Speaker on/off
+* Speaking indicator
+* Multiple speakers
+* Listener mode
+* Raise hand
+* Approve speaker
+* Remove speaker
+* Mute participant
+* Remove participant
+* Host controls
+* Moderator controls
+* Connection status
+* Reconnection handling
+
+Flow:
+
+```text
+Listener
+   ↓
+Raise Hand
+   ↓
+Request stored in Firestore
+   ↓
+Moderator/Owner approves
+   ↓
+User becomes Speaker
+   ↓
+Agora microphone enabled
+```
+
+Backend/security rules must enforce permissions.
+
+Do NOT rely only on frontend role checks.
+
+## 7. SOCIAL ROOMS
+
+Users can:
+
+* Create rooms
+* Join rooms
+* Leave rooms
+* Search rooms
+* Browse categories
+* Public rooms
+* Private rooms
+* Invite friends
+* Share rooms
+
+Room screen:
+
+* Room cover
+* Room name
+* Owner
+* Member count
+* Voice participants
+* Speakers
+* Listeners
+* Chat
+* Gifts
+* Raise hand
+* Room information
+* Share
+* Report
+* Leave
+
+## 8. CHAT
+
+Use Firestore realtime chat.
+
+Features:
+
+* Send message
+* Receive realtime messages
+* Message history
+* Pagination
+* Emoji
+* Stickers
+* User avatar
+* Username
+* Timestamp
+* Delete message for moderators
+* Basic moderation
+
+Do not download the entire chat collection.
+
+Use pagination/limited queries.
+
+## 9. USER PROFILE
+
+Profile:
+
+* Profile photo
+* Name
+* Username
+* Bio
+* Level
+* Followers
+* Following
+* Friends
+* Gifts received
+* Achievements
+* Joined rooms
+
+Actions:
+
+* Follow
+* Unfollow
+* Add friend
+* Remove friend
+* Message
+* Block
+* Report
+
+## 10. FRIEND SYSTEM
+
+Implement:
+
+* Friend requests
+* Accept request
+* Reject request
+* Friends list
+* Follow/unfollow
+* Followers
+* Following
+* Online status
+
+Use Firestore queries/indexes appropriately.
+
+## 11. VIRTUAL COINS & GIFTS
+
+Create a virtual economy.
+
+Users can:
+
+* View coin balance
+* Purchase coins later
+* Send gifts
+* Receive gifts
+* View gift history
+
+Gift fields:
+
+```text
+id
+name
+icon
+animation
+coinPrice
+isActive
+```
+
+IMPORTANT SECURITY RULE:
+
+The client must NEVER directly update its own coin balance.
+
+All wallet operations must go through Firebase Cloud Functions.
+
+Example:
+
+```text
+User
+ ↓
+Send Gift
+ ↓
+Cloud Function
+ ↓
+Transaction
+ ├── Validate sender balance
+ ├── Deduct coins
+ ├── Create gift transaction
+ └── Update receiver reward
+```
+
+Use Firestore transactions to prevent duplicate/race-condition transactions.
+
+## 12. CHALLENGES
+
+Implement:
+
+* Daily challenges
+* Weekly challenges
+* Challenge progress
+* Rewards
+* Claim reward
+
+Examples:
+
+* Join a room
+* Spend time in a voice room
+* Send gifts
+* Invite friends
+* Follow users
+
+Reward processing must happen server-side through Cloud Functions.
+
+Never allow the client to simply mark a challenge as completed.
+
+## 13. LEADERBOARDS
+
+Implement:
+
+* Daily leaderboard
+* Weekly leaderboard
+* Monthly leaderboard
+* Gift leaderboard
+* Level leaderboard
+
+For expensive aggregation, use Cloud Functions to maintain leaderboard documents instead of repeatedly scanning all users from the mobile app.
+
+## 14. NOTIFICATIONS
+
+Use Firebase Cloud Messaging.
+
+Notifications:
+
+* Friend request
+* Friend request accepted
+* New follower
+* Room invitation
+* Gift received
+* Challenge reward
+* System notification
+
+Store notification records in Firestore.
+
+## 15. MODERATION
+
+Implement:
+
+* Report user
+* Block user
+* Mute user
+* Kick user
+* Ban user from room
+* Delete message
+* Moderator role
+* Admin role
+* Owner role
+
+Firestore Security Rules and Cloud Functions must enforce these permissions.
+
+## 16. FIREBASE SECURITY RULES
+
+Write proper production-oriented Firestore Security Rules.
+
+Users should only be able to modify data they are authorized to modify.
+
+Examples:
+
+* User can update their own profile.
+* User cannot modify another user's coins.
+* User cannot change their own role.
+* User cannot make themselves room owner.
+* Only room owner/admin can promote moderators.
+* Only authorized moderators can remove/ban members.
+* Users cannot directly create arbitrary wallet transactions.
+* Challenge rewards cannot be claimed repeatedly.
+
+All sensitive business operations should go through Cloud Functions.
+
+## 17. FIREBASE STORAGE
+
+Use Firebase Storage for:
+
+* Profile photos
+* Room cover images
+* Stickers
+* Gift assets
+
+Use appropriate Storage Security Rules.
+
+Optimize/compress images before upload where appropriate.
+
+## 18. PUSH NOTIFICATIONS
+
+Use Firebase Cloud Messaging.
+
+Store device tokens securely.
+
+Implement notification handling for:
+
+* Foreground
+* Background
+* App opened from notification
+
+## 19. APP SCREENS
+
+Create:
+
+### Authentication
+
+* Splash
+* Google Login
+
+### Main
+
+* Home
+* Search
+* Categories
+* Notifications
+
+### Rooms
+
+* Room list
+* Room details
+* Live voice room
+* Create room
+* Edit room
+
+### Social
+
+* Profile
+* Edit profile
+* Friends
+* Followers
+* Following
+
+### Economy
+
+* Wallet
+* Gifts
+* Transaction history
+
+### Engagement
+
+* Challenges
+* Leaderboards
+
+### Settings
+
+* Account
+* Privacy
+* Notifications
+* Blocked users
+* About
+* Logout
+
+## 20. UI/UX
+
+Create a modern premium social-app design.
+
+The design must be completely original.
+
+Do NOT copy:
+
+* Ludo Titan UI
+* Mehfil UI
+* Logos
+* Icons
+* Colors
+* Assets
+* Exact layouts
+
+Use reusable components.
+
+Keep styling in separate StyleSheet files.
+
+No unnecessary inline styles.
+
+Use centralized colors/theme.
+
+Use responsive dimensions.
+
+Use FlatList/FlashList where appropriate.
+
+Provide proper:
+
+* Loading states
+* Empty states
+* Error states
+* Skeletons where useful
+* Pull-to-refresh
+* Network error handling
+
+## 21. REACT NATIVE ARCHITECTURE
+
+Use TypeScript.
+
+Organize the app cleanly:
+
+```text
+src/
+  components/
+  screens/
+  navigation/
+  hooks/
+  services/
+    firebase/
+    agora/
+  store/
+  utils/
+  config/
+  types/
+  constants/
+  styles/
+```
+
+Keep Firebase and Agora implementation inside service layers.
+
+Do not call Firebase/Agora directly everywhere inside screens.
+
+## 22. ENVIRONMENT CONFIGURATION
+
+Never hardcode secrets.
+
+Create:
+
+```text
+.env.example
+```
+
+Document required configuration for:
+
+* Firebase
+* Google Sign-In
+* Agora
+* Firebase Functions
+* Firebase Storage
+* FCM
+
+IMPORTANT:
+
+Agora App Certificate must never be included in the React Native app.
+
+## 23. COST/PERFORMANCE AWARENESS
+
+This app can generate a large number of Firestore reads.
+
+Therefore:
+
+* Avoid unnecessary realtime listeners.
+* Unsubscribe listeners on unmount.
+* Use pagination.
+* Use limited queries.
+* Avoid repeatedly fetching unchanged data.
+* Cache appropriate data locally.
+* Denormalize carefully when it reduces expensive reads.
+* Use Cloud Functions for aggregation.
+* Avoid listening to entire collections.
+
+Design Firestore specifically for realtime social-app usage and cost efficiency.
+
+## 24. DEVELOPMENT PROCESS
+
+Before coding:
+
+1. Audit the entire existing React Native project.
+2. Inspect package.json.
+3. Check current Firebase setup.
+4. Check Google Sign-In setup.
+5. Check whether Agora is already installed.
+6. Check existing navigation/state management.
+7. Check existing UI components/theme.
+8. Check Firebase configuration.
+9. Identify missing configuration.
+10. Create an implementation plan.
+
+Then implement feature-by-feature.
+
+Do NOT unnecessarily rewrite working code.
+
+## 25. IMPLEMENTATION ORDER
+
+Follow this order:
+
+1. Firebase configuration
+2. Google authentication
+3. User profile
+4. Home
+5. Room creation/listing
+6. Room members
+7. Firestore realtime
+8. Agora integration
+9. Live voice room
+10. Realtime chat
+11. Moderation
+12. Friends/follow system
+13. Notifications
+14. Gifts
+15. Wallet
+16. Challenges
+17. Leaderboards
+18. Polish/performance
+19. Security rules
+20. Testing
+
+## 26. TESTING
+
+After implementation:
+
+* Run TypeScript checks.
+* Run lint.
+* Fix all errors.
+* Test Google login.
+* Test logout.
+* Test profile creation.
+* Test room creation.
+* Test joining/leaving rooms.
+* Test realtime members.
+* Test realtime chat.
+* Test Agora voice.
+* Test mute/unmute.
+* Test raise-hand flow.
+* Test moderator permissions.
+* Test room banning.
+* Test gifts.
+* Test wallet transactions.
+* Test challenge rewards.
+* Test notifications.
+* Test Firebase Security Rules.
+* Test Android.
+* Test iOS.
+
+Do not leave mocked/fake functionality where real Firebase or Agora functionality is required.
+
+## FINAL REQUIREMENT
+
+Start by auditing the project and report the existing architecture and what is already implemented.
+
+Then proceed with the implementation.
+
+Do not start by rewriting the entire project.
+
+Use **Firebase + Agora** as the final backend/realtime/voice architecture for this MVP.

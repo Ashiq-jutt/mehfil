@@ -1,0 +1,7 @@
+node_modules/
+functions/lib/
+functions/node_modules/
+vendor/
+ios/Pods/
+android/build/
+android/app/build/
