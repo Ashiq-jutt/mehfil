@@ -110,6 +110,7 @@ export function useSendGift(clubId: string) {
     onSuccess: (result: SendGiftResultDto) => {
       sync(result.balance);
       queryClient.invalidateQueries({ queryKey: walletKey });
+      queryClient.invalidateQueries({ queryKey: ['leaderboard', 'board'] });
     },
     onError: error => {
       const apiError = toApiError(error);

@@ -3,6 +3,7 @@ using Mehfil.Core.Catalog;
 using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
 using Mehfil.Core.Economy;
+using Mehfil.Core.Leaderboards;
 using Mehfil.Core.Moderation;
 using Mehfil.Core.Options;
 using Mehfil.Core.Rooms;
@@ -16,6 +17,7 @@ using Mehfil.Infrastructure.Clubs;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Data.Seed;
 using Mehfil.Infrastructure.Economy;
+using Mehfil.Infrastructure.Leaderboards;
 using Mehfil.Infrastructure.Moderation;
 using Mehfil.Infrastructure.Rooms;
 using Mehfil.Infrastructure.Royalty;
@@ -77,6 +79,8 @@ public static class DependencyInjection
         services.AddScoped<IVoiceService, VoiceService>();
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<IGiftService, GiftService>();
+        services.AddSingleton<LeaderboardVersion>();
+        services.AddScoped<ILeaderboardService, LeaderboardService>();
         if (configuration.GetValue<bool>($"{PurchasesOptions.SectionName}:SandboxMode"))
         {
             services.AddSingleton<IStoreReceiptVerifier, SandboxReceiptVerifier>();

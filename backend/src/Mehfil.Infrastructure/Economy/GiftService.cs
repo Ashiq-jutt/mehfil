@@ -4,6 +4,7 @@ using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
 using Mehfil.Core.Rooms;
 using Mehfil.Infrastructure.Data;
+using Mehfil.Infrastructure.Leaderboards;
 using Mehfil.Infrastructure.Rooms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ public sealed class GiftService(
     MehfilDbContext db,
     RoomRegistry registry,
     IRoomNotifier notifier,
+    LeaderboardVersion leaderboardVersion,
     IClock clock,
     ILogger<GiftService> logger) : IGiftService
 {
@@ -134,6 +136,7 @@ public sealed class GiftService(
             db.ClubMessages.Add(message);
             await db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
+            leaderboardVersion.Bump();
 
             var users = await LoadRoomUsersAsync(club.Id, receiver is null ? [senderId] : [senderId, receiver.Id], ct);
             var evt = new GiftEventDto(

@@ -32,7 +32,7 @@ export function ClubsTopBar({ onPressAccount }: Props) {
       <View style={styles.spacer} />
 
       <TopAction icon="store" label="Store" onPress={() => comingSoon('Club Store', 10)} />
-      <TopAction icon="trophy" label="Leaderboard" onPress={() => comingSoon('Leaderboard', 9)} />
+      <TopAction icon="trophy" label="Leaderboard" onPress={() => navigation.navigate('Leaderboard')} />
       <IconButton icon="gear" accessibilityLabel="Account" onPress={onPressAccount} size={moderateScale(36)} />
     </View>
   );

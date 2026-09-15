@@ -114,9 +114,11 @@ jest.mock('react-native-linear-gradient', () => {
 
 jest.mock('react-native-svg', () => {
   const React = require('react');
-  const { View } = require('react-native');
+  const { Text: RNText, View } = require('react-native');
   const stub = name => {
-    const Component = ({ children }) => React.createElement(View, { testID: `svg-${name}` }, children);
+    // SVG <Text> carries real strings, so it must render as a Text node.
+    const Host = name === 'Text' ? RNText : View;
+    const Component = ({ children }) => React.createElement(Host, { testID: `svg-${name}` }, children);
     Component.displayName = name;
     return Component;
   };

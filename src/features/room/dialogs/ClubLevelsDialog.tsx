@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { AppText, Button, DialogCard, Icon } from '../../../components';
 import { toast } from '../../../store/toastStore';
 import { colors, gradients, moderateScale, palette, radius, spacing } from '../../../theme';
-import { formatNumber } from '../../../utils/format';
+import { formatCountdown, formatNumber } from '../../../utils/format';
 import type { ClubLevelDto } from '../../../api/types';
 
 type Props = { visible: boolean; onClose: () => void; level: ClubLevelDto };
@@ -92,12 +92,7 @@ function LevelBadge({ level, gold = false }: { level: number; gold?: boolean }) 
   );
 }
 
-export function formatCountdown(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 60_000));
-  const hours = Math.floor(total / 60);
-  const mins = total % 60;
-  return `${hours} hrs ${mins} mins`;
-}
+export { formatCountdown };
 
 const styles = StyleSheet.create({
   title: {

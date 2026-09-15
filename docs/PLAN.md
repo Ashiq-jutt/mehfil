@@ -11,6 +11,7 @@ Phase 5 (Club Info completion: admin list with 7-admin cap and owner add/remove,
 Phase 6 (Live room over SignalR: presence, 10 seats with owner seat, chat with history, announcements, mic state, lock/mute/kick/ban, exit dialog) delivered.
 Phase 7 (Agora voice: server-side AccessToken2 tokens, listener/publisher roles tied to seats and mutes, speaker routing, token renewal, speaking indicators from audio levels) delivered.
 Phase 8 (Hearts economy: wallet ledger, Shop with welcome offer and sandbox purchase verification, gifts in rooms with atomic debit, club jar and levels, realtime gift events) delivered — react-native-iap store wiring is a follow-up once store products exist.
+Phase 9 (Leaderboards: Top Clubs weekly, Top Gifters / Top Receivers daily and weekly, live rankings from gift transactions, lazy period freeze into snapshots with store-item rewards, achievements and reward notifications, podium + Results + Rewards modal + my-rank row in the app) delivered — the room's "Activity" rail stays a placeholder.
 
 This plan replaces the Firebase-only backend described in `detailed-command.txt`
 with a **C# / ASP.NET Core (MVC controllers) backend using EF Core Code First,

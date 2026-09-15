@@ -8,7 +8,10 @@ using NSubstitute;
 namespace Mehfil.Tests.Integration;
 
 /// <summary>Boots the real API (migrations + seed included) against the fixture database with Google mocked.</summary>
-public sealed class ApiFactory(string connectionString, IReadOnlyDictionary<string, string?>? extraSettings = null) : WebApplicationFactory<Program>
+public sealed class ApiFactory(
+    string connectionString,
+    IReadOnlyDictionary<string, string?>? extraSettings = null,
+    Action<IServiceCollection>? configureServices = null) : WebApplicationFactory<Program>
 {
     public const string JwtSecret = "integration-test-signing-key-0123456789abcdef";
 
@@ -32,6 +35,7 @@ public sealed class ApiFactory(string connectionString, IReadOnlyDictionary<stri
         {
             services.RemoveAll<IGoogleTokenValidator>();
             services.AddSingleton(GoogleValidator);
+            configureServices?.Invoke(services);
         });
     }
 }

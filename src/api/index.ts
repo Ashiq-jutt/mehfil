@@ -9,4 +9,5 @@ export { clubsApi, nextPageOf } from './clubs';
 export { reportsApi } from './reports';
 export { roomApi } from './room';
 export { walletApi, giftsApi } from './economy';
+export { leaderboardApi } from './leaderboard';
 export type * from './types';

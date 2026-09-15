@@ -468,3 +468,60 @@ export interface ProblemDetails {
   traceId?: string;
   errors?: Record<string, string[]>;
 }
+
+// ---- Leaderboards ---------------------------------------------------------
+
+export type LeaderboardBoard = 'TopClubs' | 'TopGifters' | 'TopReceivers';
+export type LeaderboardPeriod = 'Daily' | 'Weekly';
+export type StoreItemKind = 'Frame' | 'ChatBubble' | 'EntryStyle' | 'Background' | 'Card' | 'ClubDp';
+
+/** One ranked row: a club on Top Clubs, a user on Top Gifters / Top Receivers. */
+export interface LeaderboardEntryDto {
+  rank: number;
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+  countryCode?: string | null;
+  flagEmoji?: string | null;
+  level: number;
+  royalLevel: RoyalLevel;
+  score: number;
+}
+
+export interface LeaderboardPeriodDto {
+  label: string;
+  start: string;
+  end: string;
+  totalHearts: number;
+  entries: LeaderboardEntryDto[];
+}
+
+export interface LeaderboardDto {
+  board: LeaderboardBoard;
+  period: LeaderboardPeriod;
+  previous: LeaderboardPeriodDto;
+  current: LeaderboardPeriodDto;
+  me?: LeaderboardEntryDto | null;
+}
+
+export interface RewardItemDto {
+  code: string;
+  kind: StoreItemKind;
+  name: string;
+  assetUrl: string;
+  previewUrl?: string | null;
+}
+
+export interface RewardRankDto {
+  rank: number;
+  items: RewardItemDto[];
+}
+
+export interface BoardRewardsDto {
+  board: LeaderboardBoard;
+  ranks: RewardRankDto[];
+}
+
+export interface LeaderboardRewardsDto {
+  boards: BoardRewardsDto[];
+}

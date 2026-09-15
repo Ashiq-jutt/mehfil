@@ -53,3 +53,15 @@ export function formatHours(seconds: number): string {
   }
   return hours.toFixed(1).replace(/\.0$/, '');
 }
+
+/** 5d 15h → "5 days 15 hrs"; under a day → "15 hrs 37 mins"; never negative. */
+export function formatCountdown(ms: number): string {
+  const totalMins = Math.max(0, Math.floor(ms / 60_000));
+  const days = Math.floor(totalMins / 1440);
+  const hours = Math.floor((totalMins % 1440) / 60);
+  const mins = totalMins % 60;
+  if (days > 0) {
+    return `${days} ${days === 1 ? 'day' : 'days'} ${hours} hrs`;
+  }
+  return `${hours} hrs ${mins} mins`;
+}
