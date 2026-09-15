@@ -19,3 +19,37 @@ function trim(n: number): string {
 export function formatNumber(value: number): string {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+] as const;
+
+export const MONTH_SHORT = MONTH_NAMES.map(m => m.slice(0, 3));
+
+/** (20, 12) → "20 Dec" */
+export function formatBirthday(day?: number | null, month?: number | null): string | null {
+  if (!day || !month || month < 1 || month > 12) {
+    return null;
+  }
+  return `${day} ${MONTH_SHORT[month - 1]}`;
+}
+
+/** 5400 → "1.5", 90000 → "25" (hours, trimmed). */
+export function formatHours(seconds: number): string {
+  const hours = seconds / 3600;
+  if (hours >= 100) {
+    return hours.toFixed(0);
+  }
+  return hours.toFixed(1).replace(/\.0$/, '');
+}

@@ -5,6 +5,7 @@ Branch: `dev` (all work is developed and pushed here).
 
 Progress: Phase 1 (backend skeleton) delivered in `backend/` — see `backend/README.md`.
 Phase 2 (app foundation: Firebase removed, Mehfil identity, theme, navigation, auth flow) delivered — see `docs/SETUP.md`.
+Phase 3 (Profile + Royalty: profile screen, gender-once, birthday, avatar upload, player card, royalty tiers, countries catalog) delivered.
 
 This plan replaces the Firebase-only backend described in `detailed-command.txt`
 with a **C# / ASP.NET Core (MVC controllers) backend using EF Core Code First,

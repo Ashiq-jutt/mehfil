@@ -1,26 +1,30 @@
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, AvatarRing, HeartsPill, Icon, IconButton } from '../../components';
 import { useMe } from '../../hooks/useMe';
+import type { MainStackParamList } from '../../navigation/types';
+import { toast } from '../../store/toastStore';
 import { colors, moderateScale, spacing } from '../../theme';
+import { resolveAssetUrl } from '../../utils/assets';
 
 type Props = {
-  onPressAvatar: () => void;
   onPressAccount: () => void;
 };
 
-const comingSoon = (feature: string, phase: number) =>
-  Alert.alert(feature, `${feature} arrives in phase ${phase}.`);
+const comingSoon = (feature: string, phase: number) => toast.info(`${feature} arrives in phase ${phase}.`);
 
 /** Avatar · hearts balance · Store · Leaderboard · account, mirroring the reference header. */
-export function ClubsTopBar({ onPressAvatar, onPressAccount }: Props) {
+export function ClubsTopBar({ onPressAccount }: Props) {
   const { user } = useMe();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   return (
     <View style={styles.row}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Profile" onPress={onPressAvatar} hitSlop={6}>
-        <AvatarRing uri={user?.avatarUrl} size={moderateScale(44)} />
+      <Pressable accessibilityRole="button" accessibilityLabel="Profile" onPress={() => navigation.navigate('Profile')} hitSlop={6}>
+        <AvatarRing uri={resolveAssetUrl(user?.avatarUrl)} size={moderateScale(44)} />
       </Pressable>
 
       <HeartsPill value={user?.heartsBalance ?? 0} onPressAdd={() => comingSoon('Shop', 8)} style={styles.hearts} />

@@ -6,6 +6,7 @@ import { colors } from '../theme';
 import { LoginScreen } from '../features/auth/LoginScreen';
 import { SplashScreen } from '../features/auth/SplashScreen';
 import { ClubsHomeScreen } from '../features/clubs/ClubsHomeScreen';
+import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { useAuthStore } from '../store/authStore';
 import type { AuthStackParamList, MainStackParamList } from './types';
 
@@ -40,6 +41,7 @@ function MainNavigator() {
         contentStyle: { backgroundColor: colors.screen },
       }}>
       <MainStack.Screen name="ClubsHome" component={ClubsHomeScreen} />
+      <MainStack.Screen name="Profile" component={ProfileScreen} options={{ animation: 'slide_from_bottom' }} />
     </MainStack.Navigator>
   );
 }

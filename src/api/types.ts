@@ -29,6 +29,91 @@ export interface UserDto {
   createdAt: string;
 }
 
+export interface AchievementsDto {
+  topGifterTimes: number;
+  topReceiverTimes: number;
+  celebrityOfTheMonthTimes: number;
+  weeklyTopClubTimes: number;
+}
+
+export interface StatsDto {
+  level: number;
+  activeSeconds: number;
+  clubsFollowed: number;
+  clubsJoined: number;
+  giftsSent: number;
+  giftsReceived: number;
+  profileViews: number;
+}
+
+export interface ProfileDto {
+  user: UserDto;
+  countryName?: string | null;
+  flagEmoji?: string | null;
+  achievements: AchievementsDto;
+  stats: StatsDto;
+}
+
+export interface PublicProfileDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  signature?: string | null;
+  countryCode?: string | null;
+  countryName?: string | null;
+  flagEmoji?: string | null;
+  gender: Gender;
+  level: number;
+  heartsReceived: number;
+  heartsGifted: number;
+  royalLevel: RoyalLevel;
+  primeLevel: PrimeLevel;
+  isOnline: boolean;
+  achievements: AchievementsDto;
+  stats: StatsDto;
+  createdAt: string;
+}
+
+export interface UpdateProfileRequest {
+  displayName?: string | null;
+  signature?: string | null;
+  countryCode?: string | null;
+}
+
+export interface CountryDto {
+  code: string;
+  name: string;
+  flagEmoji: string;
+  isFeatured: boolean;
+}
+
+export interface ClubCategoryDto {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface RoyaltyLevelDto {
+  code: string;
+  rank: number;
+  pointsRequired: number;
+  achieved: boolean;
+  achievedAt?: string | null;
+}
+
+export interface RoyaltyDto {
+  points: number;
+  royalLevel: RoyalLevel;
+  highestRoyalLevel: RoyalLevel;
+  primeLevel: PrimeLevel;
+  streakMonths: number;
+  nextLevelCode?: string | null;
+  pointsToNextLevel?: number | null;
+  royalLevels: RoyaltyLevelDto[];
+  primeLevels: RoyaltyLevelDto[];
+  benefits: string[];
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;

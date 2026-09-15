@@ -3,6 +3,7 @@ import React, { PropsWithChildren, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ApiError } from '../api';
+import { ToastHost } from '../components/ui/ToastHost';
 import { useAuthStore } from '../store/authStore';
 
 const queryClient = new QueryClient({
@@ -43,6 +44,7 @@ export function AppProviders({ children }: PropsWithChildren) {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <SessionBootstrap>{children}</SessionBootstrap>
+        <ToastHost />
       </QueryClientProvider>
     </SafeAreaProvider>
   );

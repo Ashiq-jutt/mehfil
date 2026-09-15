@@ -1,10 +1,16 @@
 using Mehfil.Core.Auth;
+using Mehfil.Core.Catalog;
 using Mehfil.Core.Common;
 using Mehfil.Core.Options;
+using Mehfil.Core.Royalty;
+using Mehfil.Core.Storage;
 using Mehfil.Core.Users;
 using Mehfil.Infrastructure.Auth;
+using Mehfil.Infrastructure.Catalog;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Data.Seed;
+using Mehfil.Infrastructure.Royalty;
+using Mehfil.Infrastructure.Storage;
 using Mehfil.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,8 +31,10 @@ public static class DependencyInjection
             .ValidateOnStart();
         services.AddOptions<GoogleAuthOptions>().Bind(configuration.GetSection(GoogleAuthOptions.SectionName));
         services.AddOptions<DevLoginOptions>().Bind(configuration.GetSection(DevLoginOptions.SectionName));
+        services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.SectionName));
 
         services.AddSingleton<IClock, SystemClock>();
+        services.AddMemoryCache();
 
         var connectionString = configuration.GetConnectionString(ConnectionStringName)
             ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is not configured.");
@@ -43,8 +51,12 @@ public static class DependencyInjection
 
         services.AddSingleton<IAccessTokenService, JwtAccessTokenService>();
         services.AddSingleton<IGoogleTokenValidator, GoogleTokenValidator>();
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICatalogService, CatalogService>();
+        services.AddScoped<IRoyaltyService, RoyaltyService>();
 
         return services;
     }

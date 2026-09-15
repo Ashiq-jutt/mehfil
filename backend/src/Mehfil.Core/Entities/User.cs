@@ -46,6 +46,12 @@ public class User : AuditableEntity
     public bool IsOnline { get; set; }
     public DateTimeOffset? LastSeenAt { get; set; }
 
+    /// <summary>Total seconds spent inside club rooms ("Hours active" on the profile).</summary>
+    public long ActiveSeconds { get; set; }
+
+    /// <summary>How many times other users opened this profile / player card.</summary>
+    public int ProfileViews { get; set; }
+
     public UserStatus Status { get; set; } = UserStatus.Active;
     public UserRole Role { get; set; } = UserRole.User;
 

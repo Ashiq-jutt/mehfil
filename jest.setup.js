@@ -42,6 +42,16 @@ jest.mock('@react-native-google-signin/google-signin', () => ({
   },
 }));
 
+jest.mock('@react-native-clipboard/clipboard', () => ({
+  __esModule: true,
+  default: { setString: jest.fn(), getString: jest.fn(async () => '') },
+}));
+
+jest.mock('react-native-image-picker', () => ({
+  launchImageLibrary: jest.fn(async () => ({ didCancel: true })),
+  launchCamera: jest.fn(async () => ({ didCancel: true })),
+}));
+
 jest.mock('react-native-linear-gradient', () => {
   const React = require('react');
   const { View } = require('react-native');
@@ -67,6 +77,10 @@ jest.mock('react-native-svg', () => {
     Circle: stub('Circle'),
     Rect: stub('Rect'),
     Ellipse: stub('Ellipse'),
+    Defs: stub('Defs'),
+    LinearGradient: stub('LinearGradient'),
+    Stop: stub('Stop'),
+    Text: stub('Text'),
   };
 });
 

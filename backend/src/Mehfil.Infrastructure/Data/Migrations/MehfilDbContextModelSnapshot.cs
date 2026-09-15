@@ -925,6 +925,9 @@ namespace Mehfil.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("ActiveSeconds")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("AvatarUrl")
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
@@ -988,6 +991,9 @@ namespace Mehfil.Infrastructure.Data.Migrations
                     b.Property<byte>("PrimeLevel")
                         .HasColumnType("tinyint");
 
+                    b.Property<int>("ProfileViews")
+                        .HasColumnType("int");
+
                     b.Property<string>("PublicId")
                         .IsRequired()
                         .HasMaxLength(16)
@@ -1040,6 +1046,8 @@ namespace Mehfil.Infrastructure.Data.Migrations
 
                     b.HasIndex("PublicId")
                         .IsUnique();
+
+                    b.HasIndex("RoyaltyPoints");
 
                     b.HasIndex("Status", "IsOnline");
 

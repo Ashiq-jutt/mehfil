@@ -1,4 +1,5 @@
-import { formatCompact, formatNumber } from '../format';
+import { formatBirthday, formatCompact, formatHours, formatNumber } from '../format';
+import { resolveAssetUrl } from '../assets';
 
 describe('formatCompact', () => {
   it.each([
@@ -19,5 +20,31 @@ describe('formatNumber', () => {
     expect(formatNumber(4900)).toBe('4,900');
     expect(formatNumber(24900)).toBe('24,900');
     expect(formatNumber(350)).toBe('350');
+  });
+});
+
+describe('formatBirthday', () => {
+  it('renders day + short month and handles missing values', () => {
+    expect(formatBirthday(20, 12)).toBe('20 Dec');
+    expect(formatBirthday(1, 1)).toBe('1 Jan');
+    expect(formatBirthday(null, 5)).toBeNull();
+    expect(formatBirthday(5, 13)).toBeNull();
+  });
+});
+
+describe('formatHours', () => {
+  it('converts seconds to trimmed hours', () => {
+    expect(formatHours(0)).toBe('0');
+    expect(formatHours(5400)).toBe('1.5');
+    expect(formatHours(90 * 3600)).toBe('90');
+    expect(formatHours(110 * 3600 + 1800)).toBe('111');
+  });
+});
+
+describe('resolveAssetUrl', () => {
+  it('prefixes relative upload paths and leaves absolute URLs alone', () => {
+    expect(resolveAssetUrl('/uploads/avatars/1/a.jpg')).toBe('http://test.local/uploads/avatars/1/a.jpg');
+    expect(resolveAssetUrl('https://lh3.googleusercontent.com/x')).toBe('https://lh3.googleusercontent.com/x');
+    expect(resolveAssetUrl(null)).toBeUndefined();
   });
 });

@@ -5,6 +5,7 @@ import { AppText, AvatarRing, Button, DialogCard, HeartsPill } from '../../compo
 import { useMe } from '../../hooks/useMe';
 import { useAuthStore } from '../../store/authStore';
 import { colors, moderateScale, radius, spacing } from '../../theme';
+import { resolveAssetUrl } from '../../utils/assets';
 
 type Props = { visible: boolean; onClose: () => void };
 
@@ -17,7 +18,7 @@ export function AccountSheet({ visible, onClose }: Props) {
   return (
     <DialogCard visible={visible} onClose={onClose}>
       <View style={styles.header}>
-        <AvatarRing uri={user?.avatarUrl} size={moderateScale(84)} />
+        <AvatarRing uri={resolveAssetUrl(user?.avatarUrl)} size={moderateScale(84)} />
         <AppText variant="title" shadow style={styles.name}>
           {user?.displayName ?? '—'}
         </AppText>
@@ -34,7 +35,7 @@ export function AccountSheet({ visible, onClose }: Props) {
 
       <Button label="Sign out" variant="danger" icon="logout" loading={isBusy} onPress={signOut} />
       <AppText variant="tiny" color="textMuted" align="center" style={styles.footer}>
-        Mehfil · phase 2 build
+        Mehfil · phase 3 build
       </AppText>
     </DialogCard>
   );

@@ -29,6 +29,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         b.HasIndex(x => x.HeartsGifted);
         b.HasIndex(x => x.HeartsReceived);
+        b.HasIndex(x => x.RoyaltyPoints);
         b.HasIndex(x => new { x.Status, x.IsOnline });
 
         b.HasOne(x => x.Country)

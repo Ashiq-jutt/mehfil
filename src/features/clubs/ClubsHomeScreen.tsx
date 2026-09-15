@@ -47,7 +47,7 @@ export function ClubsHomeScreen() {
   return (
     <Screen>
       <LanternsHeader />
-      <ClubsTopBar onPressAvatar={() => setAccountVisible(true)} onPressAccount={() => setAccountVisible(true)} />
+      <ClubsTopBar onPressAccount={() => setAccountVisible(true)} />
 
       <Tabs.Navigator
         tabBar={renderTabBar}
