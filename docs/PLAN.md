@@ -1,7 +1,9 @@
 # Mehfil — Redesign + C#/.NET Backend Plan
 
-Status: **DRAFT — waiting for approval before implementation starts.**
+Status: **Approved 2026-09-15 with the §7 defaults** (SQL Server, .NET 10, Hearts, `com.jalopy.mehfil`).
 Branch: `dev` (all work is developed and pushed here).
+
+Progress: Phase 1 (backend skeleton) delivered in `backend/` — see `backend/README.md`.
 
 This plan replaces the Firebase-only backend described in `detailed-command.txt`
 with a **C# / ASP.NET Core (MVC controllers) backend using EF Core Code First,

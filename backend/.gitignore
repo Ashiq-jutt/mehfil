@@ -1,0 +1,29 @@
+# Build output
+bin/
+obj/
+out/
+publish/
+TestResults/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+*.DS_Store
+
+# Local configuration & secrets (never commit)
+appsettings.*.local.json
+appsettings.Local.json
+*.pfx
+*.env
+.env
+
+# Logs
+logs/
+*.log
+
+# Uploaded files (local IFileStorage)
+src/Mehfil.Api/wwwroot/uploads/

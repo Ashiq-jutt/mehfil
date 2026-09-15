@@ -1,0 +1,39 @@
+# Local stack: SQL Server 2022 + the API (Code First auto-migrates on boot).
+#   docker compose up --build
+#   Swagger: http://localhost:8080/swagger
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Mehfil_Dev_Pa55word!}
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Mehfil.Api/Dockerfile
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=Mehfil;User Id=sa;Password=${MSSQL_SA_PASSWORD:-Mehfil_Dev_Pa55word!};TrustServerCertificate=True;MultipleActiveResultSets=True"
+      Jwt__Secret: ${JWT_SECRET:-dev-only-signing-key-change-me-0123456789abcdef}
+      Database__AutoMigrate: "true"
+      Database__SeedData: "true"
+      DevLogin__Enabled: "true"
+    ports:
+      - "8080:8080"
+
+volumes:
+  mssql-data:
