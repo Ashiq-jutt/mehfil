@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 import { roomApi, toApiError } from '../api';
 import type { ClubMessageDto, ClubRole, GiftEventDto, RoomClubDto, RoomStateDto, RoomUserDto, SeatDto } from '../api/types';
+import type { RoomEntry } from '../features/room/EntryOverlay';
 import { entryStyle } from '../features/store/cosmetics';
 import { ensureConnected, getRoomConnection, parseHubError } from '../realtime/roomConnection';
 import { agoraVoice, VoiceStatus } from '../voice/agoraVoice';
@@ -36,6 +37,10 @@ interface RoomState {
   removedReason: string | null;
   /** Most recent gift for the floating banner; cleared by the screen when the animation ends. */
   lastGift: GiftEventDto | null;
+  /** Most recent arrival with a Club Store entry style; drives the fly-across animation. */
+  lastEntry: RoomEntry | null;
+  /** Club level reached by the last gift, for the celebration burst. */
+  levelUp: number | null;
 
   join: (clubId: string) => Promise<void>;
   leave: () => Promise<void>;
@@ -48,6 +53,8 @@ interface RoomState {
   leaveSeat: () => Promise<void>;
   applyState: (state: RoomStateDto) => void;
   clearGift: () => void;
+  clearEntry: () => void;
+  clearLevelUp: () => void;
   reset: () => void;
 }
 
@@ -74,6 +81,8 @@ const initial = {
   voiceError: null,
   removedReason: null,
   lastGift: null as GiftEventDto | null,
+  lastEntry: null as RoomEntry | null,
+  levelUp: null as number | null,
 };
 
 export const useRoomStore = create<RoomState>((set, get) => {
@@ -99,6 +108,9 @@ export const useRoomStore = create<RoomState>((set, get) => {
       if (user.id !== myId()) {
         const arrival = entryStyle(user.entryStyleCode);
         appendFeed(systemItem(arrival ? `${user.displayName} arrived by ${arrival.label} ${arrival.emoji}` : `${user.displayName} entered the room`));
+        if (arrival && user.entryStyleCode) {
+          set({ lastEntry: { id: `${user.id}-${Date.now()}`, displayName: user.displayName, entryStyleCode: user.entryStyleCode } });
+        }
       }
     });
 
@@ -150,6 +162,7 @@ export const useRoomStore = create<RoomState>((set, get) => {
     hub.on('GiftReceived', (gift: GiftEventDto) => {
       set(state => ({
         lastGift: gift,
+        levelUp: gift.leveledUp ? gift.clubLevel.level : state.levelUp,
         club: state.club
           ? {
               ...state.club,
@@ -362,6 +375,14 @@ export const useRoomStore = create<RoomState>((set, get) => {
 
     clearGift() {
       set({ lastGift: null });
+    },
+
+    clearEntry() {
+      set({ lastEntry: null });
+    },
+
+    clearLevelUp() {
+      set({ levelUp: null });
     },
 
     reset() {

@@ -1,12 +1,13 @@
 import React, { memo, useCallback } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, Button, CloseButton, EmptyState, ErrorState, Icon, IconName, LoadingState, Screen } from '../../components';
+import { AppText, Button, CloseButton, EmptyState, ErrorState, Icon, IconName, Screen } from '../../components';
 import { useMarkAllRead, useMarkRead, useNotifications } from '../../hooks/useNotifications';
 import { useNow } from '../../hooks/useNow';
 import { notificationTarget, parseNotificationData } from '../../navigation/notificationTarget';
 import type { MainStackScreenProps } from '../../navigation/types';
 import { colors, moderateScale, radius, spacing } from '../../theme';
+import { NotificationsSkeleton } from './NotificationsSkeleton';
 import { formatTimeAgo } from '../../utils/format';
 import type { NotificationDto, NotificationType } from '../../api/types';
 
@@ -57,7 +58,7 @@ export function NotificationsScreen({ navigation }: MainStackScreenProps<'Notifi
         <Button label={`Mark all ${unread} as read`} variant="ghost" loading={markAll.isPending} onPress={() => markAll.mutate()} style={styles.markAll} />
       ) : null}
 
-      {query.isLoading && !query.data ? <LoadingState /> : null}
+      {query.isLoading && !query.data ? <NotificationsSkeleton /> : null}
       {query.error && !query.data ? <ErrorState title="Could not load notifications" actionLabel="Retry" onAction={() => query.refetch()} /> : null}
 
       {query.data ? (

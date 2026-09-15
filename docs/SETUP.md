@@ -60,12 +60,21 @@ npm run android   # or: npm run ios
 ```
 
 Sign in with **Developer login** (any email) → you land on Clubs Home. Tap the gear icon
-for the account card and **Sign out**.
+for **Settings** (push preferences, blocked users, sign out).
 
 ## 4. Checks
 
 ```sh
-npm run check     # typecheck + lint + jest
+npm run check              # typecheck + lint + jest
+cd backend && dotnet test  # unit tests; integration tests need SQL Server
+```
+
+`.github/workflows/ci.yml` runs both on every push and pull request to `main` and `dev`, and
+fails if the EF Core model has drifted from the committed migrations. Backend integration
+tests skip themselves unless `MEHFIL_TEST_CONNECTION_STRING` points at a SQL Server instance:
+
+```sh
+export MEHFIL_TEST_CONNECTION_STRING="Server=localhost,1433;Database=MehfilTests;User Id=sa;Password=...;TrustServerCertificate=true"
 ```
 
 ## 5. Push notifications (optional)

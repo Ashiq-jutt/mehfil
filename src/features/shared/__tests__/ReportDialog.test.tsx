@@ -5,6 +5,7 @@ import React from 'react';
 import { catalogApi } from '../../../api/catalog';
 import { reportsApi } from '../../../api/reports';
 import { useAuthStore } from '../../../store/authStore';
+import { toast } from '../../../store/toastStore';
 import { ReportDialog } from '../ReportDialog';
 
 jest.mock('../../../api/catalog', () => ({
@@ -20,8 +21,12 @@ jest.mock('../../../api/reports', () => ({
   reportsApi: { create: jest.fn(async () => ({ id: 1, targetType: 'Club', targetId: '29451765', reason: 'spam', status: 'Open', createdAt: '' })) },
 }));
 
+let client: QueryClient | null = null;
+
 function renderDialog(onClose = jest.fn()) {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  // Garbage collection is scheduled when the last observer unmounts, which happens after this
+  // test's afterEach; gcTime 0 on both caches keeps those timers from outliving the run.
+  client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { gcTime: 0 } } });
   return render(
     <QueryClientProvider client={client}>
       <ReportDialog visible onClose={onClose} targetType="Club" targetId="29451765" targetLabel="Club · ANAYA" />
@@ -33,6 +38,12 @@ describe('ReportDialog', () => {
   beforeEach(() => {
     useAuthStore.setState({ status: 'signedIn' });
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    client?.clear();
+    client = null;
+    toast.clear();
   });
 
   it('loads reasons, requires one, then submits and closes', async () => {

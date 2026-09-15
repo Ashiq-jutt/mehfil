@@ -117,8 +117,11 @@ describe('roomStore', () => {
     });
     expect(useRoomStore.getState().club?.level).toBe(21);
     expect(useRoomStore.getState().lastGift?.gift.code).toBe('rose');
+    expect(useRoomStore.getState().levelUp).toBe(21);
     useRoomStore.getState().clearGift();
+    useRoomStore.getState().clearLevelUp();
     expect(useRoomStore.getState().lastGift).toBeNull();
+    expect(useRoomStore.getState().levelUp).toBeNull();
 
     mockHandlers.RemovedFromRoom('kicked');
     expect(useRoomStore.getState().removedReason).toBe('kicked');

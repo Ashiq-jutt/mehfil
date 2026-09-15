@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, CloseButton, EmptyState, ErrorState, Icon, LoadingState, PillTabs, Screen } from '../../components';
+import { AppText, CloseButton, EmptyState, ErrorState, Icon, PillTabs, Screen } from '../../components';
 import { useLeaderboard, useLeaderboardRewards } from '../../hooks/useLeaderboard';
 import { useNow } from '../../hooks/useNow';
 import type { MainStackScreenProps } from '../../navigation/types';
@@ -9,6 +9,7 @@ import { colors, moderateScale, palette, radius, spacing } from '../../theme';
 import { formatCompact, formatCountdown } from '../../utils/format';
 import { StoreItemThumb } from '../store/StoreItemThumb';
 import { BOARD_TABS, PERIOD_TABS, subjectHeading } from './leaderboardCopy';
+import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 import { Podium } from './Podium';
 import { RankRow } from './RankRow';
 import { ResultsDialog } from './ResultsDialog';
@@ -112,7 +113,7 @@ export function LeaderboardScreen({ navigation }: MainStackScreenProps<'Leaderbo
         <PillTabs items={PERIOD_TABS} activeKey={period} onChange={key => setPeriod(key as LeaderboardPeriod)} style={styles.periodTabs} />
       ) : null}
 
-      {query.isLoading && !data ? <LoadingState /> : null}
+      {query.isLoading && !data ? <LeaderboardSkeleton /> : null}
       {query.error && !data ? <ErrorState title="Could not load the leaderboard" actionLabel="Retry" onAction={() => query.refetch()} /> : null}
 
       {data ? (

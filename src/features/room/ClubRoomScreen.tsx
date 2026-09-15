@@ -15,7 +15,10 @@ import { ChatFeed } from './ChatFeed';
 import { ClubLevelsDialog } from './dialogs/ClubLevelsDialog';
 import { GiftSheet } from './dialogs/GiftSheet';
 import { AnnouncementDialog, ExitDialog, SeatAction, SeatMenuDialog } from './dialogs/RoomDialogs';
+import { EntryOverlay } from './EntryOverlay';
 import { GiftOverlay } from './GiftOverlay';
+import { LevelUpOverlay } from './LevelUpOverlay';
+import { ActivityDialog } from './dialogs/ActivityDialog';
 import { RoomBackdrop } from './RoomBackdrop';
 import { RoomHeader } from './RoomHeader';
 import { RoomBottomBar, RoomRightRail } from './RoomRails';
@@ -23,7 +26,6 @@ import { SeatGrid } from './SeatGrid';
 import { styles } from './ClubRoomScreen.styles';
 import type { RoomUserDto, SeatDto } from '../../api/types';
 
-const comingSoon = (what: string, phase: number) => toast.info(`${what} arrives in phase ${phase}.`);
 
 export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'ClubRoom'>) {
   const { publicId } = route.params;
@@ -44,6 +46,7 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
   const [savingAnnouncement, setSavingAnnouncement] = useState(false);
   const [giftOpen, setGiftOpen] = useState(false);
   const [levelsOpen, setLevelsOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
   const exitConfirmed = useRef(false);
 
   const canModerate = room.myRole === 'Owner' || room.myRole === 'Admin';
@@ -254,7 +257,7 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
                 onPressTrophy={() => setLevelsOpen(true)}
                 onPressJar={() => setLevelsOpen(true)}
                 onPressOffer={() => navigation.navigate('Shop')}
-                onPressActivity={() => comingSoon('Activities', 9)}
+                onPressActivity={() => setActivityOpen(true)}
               />
             </View>
 
@@ -313,7 +316,17 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
           }}
         />
       ) : null}
+      <ActivityDialog
+        visible={activityOpen}
+        onClose={() => setActivityOpen(false)}
+        feed={visibleFeed}
+        totalHearts={club?.totalHearts ?? 0}
+        onlineCount={room.onlineCount}
+      />
+
       <GiftOverlay event={room.lastGift} onDone={room.clearGift} />
+      <EntryOverlay entry={room.lastEntry} onDone={room.clearEntry} />
+      <LevelUpOverlay level={room.levelUp} onDone={room.clearLevelUp} />
     </View>
   );
 }

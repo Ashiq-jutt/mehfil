@@ -6,6 +6,7 @@ import type { AuthResponse, UserDto } from '../api/types';
 import { getGoogleIdToken, signOutOfGoogle } from '../auth/googleSignIn';
 import { sessionStorage, StoredSession } from '../auth/sessionStorage';
 import { unregisterPush } from '../push/pushService';
+import { toast } from './toastStore';
 
 export type AuthStatus = 'restoring' | 'signedOut' | 'signedIn';
 
@@ -122,6 +123,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
         await signOutOfGoogle();
       } finally {
         await dropSession();
+        toast.clear();
         set({ isBusy: false });
       }
     },

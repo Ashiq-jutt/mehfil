@@ -112,7 +112,7 @@ export function SettingsScreen({ navigation }: MainStackScreenProps<'Settings'>)
         <Button label="Sign out" variant="danger" icon="logout" loading={isBusy} onPress={signOut} />
         <Button label="Delete account" variant="ghost" onPress={() => setDeleting(true)} style={styles.delete} />
         <AppText variant="tiny" color="textMuted" align="center" style={styles.footer}>
-          Mehfil · phase 11 build
+          Mehfil
         </AppText>
       </ScrollView>
 

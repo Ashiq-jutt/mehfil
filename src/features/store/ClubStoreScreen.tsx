@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-import { AppText, CloseButton, EmptyState, ErrorState, HeartsPill, LoadingState, Screen } from '../../components';
+import { AppText, CloseButton, EmptyState, ErrorState, HeartsPill, Screen } from '../../components';
 import { useBuyItem, useEquipItem, useStoreItems } from '../../hooks/useClubStore';
 import { useMe } from '../../hooks/useMe';
 import type { MainStackScreenProps } from '../../navigation/types';
@@ -10,6 +10,7 @@ import { colors, gradients, moderateScale, palette, radius, shadows, spacing } f
 import { resolveAssetUrl } from '../../utils/assets';
 import { KindTabs } from './KindTabs';
 import { StoreItemCard } from './StoreItemCard';
+import { StoreGridSkeleton } from './StoreGridSkeleton';
 import { StoreItemPreviewDialog } from './StoreItemPreviewDialog';
 import type { StoreItemDto, StoreItemKind } from '../../api/types';
 
@@ -47,7 +48,7 @@ export function ClubStoreScreen({ navigation, route }: MainStackScreenProps<'Clu
 
       <KindTabs kinds={store.data?.kinds ?? []} active={kind} onChange={setKind} />
 
-      {store.isLoading && !store.data ? <LoadingState /> : null}
+      {store.isLoading && !store.data ? <StoreGridSkeleton /> : null}
       {store.error && !store.data ? <ErrorState title="Could not load the store" actionLabel="Retry" onAction={() => store.refetch()} /> : null}
 
       {store.data ? (

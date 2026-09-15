@@ -10,6 +10,7 @@ export { HeartsPill } from './ui/HeartsPill';
 export { SectionRibbon } from './ui/SectionRibbon';
 export { DialogCard } from './ui/DialogCard';
 export { EmptyState, ErrorState, LoadingState, ErrorBanner } from './ui/States';
+export { Skeleton, SkeletonList } from './ui/Skeleton';
 export { TextField } from './ui/TextField';
 export { Icon } from './icons/Icon';
 export type { IconName } from './icons/Icon';

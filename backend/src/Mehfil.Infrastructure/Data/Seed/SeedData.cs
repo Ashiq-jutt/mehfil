@@ -7,7 +7,7 @@ namespace Mehfil.Infrastructure.Data.Seed;
 /// Catalog definitions. Asset URLs are relative to the API's static file root and are
 /// placeholders until the original artwork lands in a later phase.
 /// </summary>
-internal static class SeedData
+public static class SeedData
 {
     public static IEnumerable<Country> Countries()
     {

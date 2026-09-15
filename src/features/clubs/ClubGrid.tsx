@@ -4,11 +4,12 @@ import type { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query
 import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { EmptyState, ErrorState, LoadingState } from '../../components';
+import { EmptyState, ErrorState } from '../../components';
 import { flattenPages, useFollowClub } from '../../hooks/useClubs';
 import type { MainStackParamList } from '../../navigation/types';
 import { colors, spacing } from '../../theme';
 import { ClubCard } from './ClubCard';
+import { ClubGridSkeleton } from './ClubGridSkeleton';
 import type { ClubCardDto, PagedResult } from '../../api/types';
 
 type Props = {
@@ -41,7 +42,7 @@ export function ClubGrid({ query, header, emptyTitle, emptyMessage, emptyIcon = 
   );
 
   const empty = query.isLoading ? (
-    <LoadingState />
+    <ClubGridSkeleton />
   ) : query.isError ? (
     <ErrorState title="Could not load clubs" message={query.error.message} actionLabel="Retry" onAction={() => query.refetch()} />
   ) : (
