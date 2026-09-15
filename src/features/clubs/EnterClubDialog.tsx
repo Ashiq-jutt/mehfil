@@ -35,7 +35,7 @@ export function EnterClubDialog({ visible, onClose }: Props) {
     lookup.mutate(clubId, {
       onSuccess: club => {
         onClose();
-        navigation.navigate('ClubInfo', { publicId: club.id });
+        navigation.navigate('ClubRoom', { publicId: club.id });
       },
       onError: e => {
         const apiError = toApiError(e);

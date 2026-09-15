@@ -52,6 +52,29 @@ jest.mock('react-native-image-picker', () => ({
   launchCamera: jest.fn(async () => ({ didCancel: true })),
 }));
 
+jest.mock('@microsoft/signalr', () => {
+  class HubConnectionBuilder {
+    withUrl() {
+      return this;
+    }
+    withAutomaticReconnect() {
+      return this;
+    }
+    configureLogging() {
+      return this;
+    }
+    build() {
+      return { state: 'Disconnected', on: jest.fn(), onreconnecting: jest.fn(), onreconnected: jest.fn(), onclose: jest.fn(), start: jest.fn(async () => undefined), stop: jest.fn(async () => undefined), invoke: jest.fn(async () => undefined) };
+    }
+  }
+  return {
+    HubConnectionBuilder,
+    HubConnectionState: { Disconnected: 'Disconnected', Connecting: 'Connecting', Connected: 'Connected', Reconnecting: 'Reconnecting' },
+    HttpTransportType: { WebSockets: 1 },
+    LogLevel: { Information: 2, Warning: 3 },
+  };
+});
+
 jest.mock('react-native-linear-gradient', () => {
   const React = require('react');
   const { View } = require('react-native');

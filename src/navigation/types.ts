@@ -8,6 +8,7 @@ export type MainStackParamList = {
   ClubsHome: undefined;
   Profile: undefined;
   ClubInfo: { publicId: string };
+  ClubRoom: { publicId: string };
   CreateClub: { publicId?: string } | undefined;
 };
 

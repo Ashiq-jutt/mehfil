@@ -255,6 +255,73 @@ export interface ReportDto {
   createdAt: string;
 }
 
+export type MessageType = 'Text' | 'System' | 'Gift';
+
+export interface RoomUserDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  level: number;
+  role: ClubRole;
+  gender: Gender;
+  royalLevel: RoyalLevel;
+  micEnabled: boolean;
+  isSpeaking: boolean;
+}
+
+export interface SeatDto {
+  index: number;
+  isLocked: boolean;
+  isMuted: boolean;
+  isOwnerSeat: boolean;
+  user?: RoomUserDto | null;
+}
+
+export interface ClubMessageDto {
+  id: number;
+  type: MessageType;
+  text: string;
+  sender?: RoomUserDto | null;
+  createdAt: string;
+  giftTransactionId?: number | null;
+}
+
+export interface RoomClubDto {
+  id: string;
+  name: string;
+  coverUrl?: string | null;
+  level: number;
+  announcement?: string | null;
+  ownerId: string;
+  jarHearts: number;
+  jarTarget: number;
+  jarResetsAt: string;
+  jarsCollected: number;
+  jarsForNextLevel: number;
+  totalHearts: number;
+  followerCount: number;
+  isFollowing: boolean;
+}
+
+export interface RoomStateDto {
+  club: RoomClubDto;
+  myRole?: ClubRole | null;
+  mySeatIndex?: number | null;
+  onlineCount: number;
+  seats: SeatDto[];
+  users: RoomUserDto[];
+  recentMessages: ClubMessageDto[];
+}
+
+export interface ClubBanDto {
+  userId: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  byUserId: string;
+  reason?: string | null;
+  createdAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;

@@ -36,7 +36,7 @@ export function TopClubsBanner({ clubs }: Props) {
             <Pressable
               key={rank}
               accessibilityRole="button"
-              onPress={() => navigation.navigate('ClubInfo', { publicId: club.id })}
+              onPress={() => navigation.navigate('ClubRoom', { publicId: club.id })}
               style={[styles.slot, rank === 1 ? styles.slotFirst : null]}>
               <View style={[styles.cover, { width: height, height }]}>
                 <ClubCover uri={club.coverUrl} name={club.name} radius={radius.sm} />

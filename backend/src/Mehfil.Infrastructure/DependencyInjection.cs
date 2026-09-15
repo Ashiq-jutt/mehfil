@@ -4,6 +4,7 @@ using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
 using Mehfil.Core.Moderation;
 using Mehfil.Core.Options;
+using Mehfil.Core.Rooms;
 using Mehfil.Core.Royalty;
 using Mehfil.Core.Storage;
 using Mehfil.Core.Users;
@@ -13,6 +14,7 @@ using Mehfil.Infrastructure.Clubs;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Data.Seed;
 using Mehfil.Infrastructure.Moderation;
+using Mehfil.Infrastructure.Rooms;
 using Mehfil.Infrastructure.Royalty;
 using Mehfil.Infrastructure.Storage;
 using Mehfil.Infrastructure.Users;
@@ -64,6 +66,8 @@ public static class DependencyInjection
         services.AddScoped<IClubService, ClubService>();
         services.AddScoped<IClubMembersService, ClubMembersService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddSingleton<RoomRegistry>();
+        services.AddScoped<IRoomService, RoomService>();
 
         return services;
     }

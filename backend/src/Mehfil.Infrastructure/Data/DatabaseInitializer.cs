@@ -41,5 +41,14 @@ public static class DatabaseInitializer
             var seeder = scope.ServiceProvider.GetRequiredService<DbSeeder>();
             await seeder.SeedAsync(ct);
         }
+
+        // Presence lives in memory: after a restart nobody is online and no seat is held.
+        var seatsCleared = await db.ClubSeats.Where(s => s.UserId != null)
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.UserId, (long?)null).SetProperty(x => x.TakenAt, (DateTimeOffset?)null).SetProperty(x => x.IsMuted, false), ct);
+        var clubsReset = await db.Clubs.Where(c => c.OnlineCount != 0).ExecuteUpdateAsync(s => s.SetProperty(c => c.OnlineCount, 0), ct);
+        if (seatsCleared > 0 || clubsReset > 0)
+        {
+            logger.LogInformation("Reset room presence: {Seats} seats released, {Clubs} clubs marked offline", seatsCleared, clubsReset);
+        }
     }
 }

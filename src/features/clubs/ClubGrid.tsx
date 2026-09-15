@@ -25,7 +25,7 @@ export function ClubGrid({ query, header, emptyTitle, emptyMessage, emptyIcon = 
   const follow = useFollowClub();
   const clubs = flattenPages(query.data);
 
-  const onPress = useCallback((club: ClubCardDto) => navigation.navigate('ClubInfo', { publicId: club.id }), [navigation]);
+  const onPress = useCallback((club: ClubCardDto) => navigation.navigate('ClubRoom', { publicId: club.id }), [navigation]);
   const onToggleFollow = useCallback(
     (club: ClubCardDto) => follow.mutate({ publicId: club.id, follow: !club.isFollowing }),
     [follow],

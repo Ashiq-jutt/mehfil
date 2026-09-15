@@ -2,7 +2,9 @@ using System.Text.Json.Serialization;
 using FluentValidation;
 using Mehfil.Api.Extensions;
 using Mehfil.Api.Filters;
+using Mehfil.Api.Hubs;
 using Mehfil.Api.Middleware;
+using Mehfil.Core.Rooms;
 using Mehfil.Infrastructure;
 using Mehfil.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -44,6 +46,12 @@ builder.Services.AddApiRateLimiting();
 builder.Services.AddSwaggerDocs();
 builder.Services.AddHealthChecks().AddDbContextCheck<MehfilDbContext>("database");
 
+// Realtime rooms.
+builder.Services
+    .AddSignalR(options => options.EnableDetailedErrors = builder.Environment.IsDevelopment())
+    .AddJsonProtocol(options => options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddSingleton<IRoomNotifier, SignalRRoomNotifier>();
+
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
@@ -66,6 +74,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ClubHub>("/hubs/club");
 app.MapHealthChecks("/healthz");
 
 // Code First: create/upgrade the database and seed catalogs before serving traffic.

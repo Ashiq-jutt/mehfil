@@ -264,7 +264,7 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
 
       {club ? (
         <View style={styles.footer}>
-          <Button label="Enter club" size="lg" icon="mic" onPress={() => toast.info('The live room arrives in phase 6.')} />
+          <Button label="Enter club" size="lg" icon="mic" onPress={() => navigation.navigate('ClubRoom', { publicId: club.id })} />
         </View>
       ) : null}
 
