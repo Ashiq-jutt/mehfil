@@ -71,6 +71,7 @@ public interface IRoomNotifier
     Task MessageDeletedAsync(long clubId, long messageId);
     Task AnnouncementChangedAsync(long clubId, string? text);
     Task UserStateChangedAsync(long clubId, string userPublicId, bool micEnabled, bool isSpeaking);
+    Task GiftReceivedAsync(long clubId, Economy.GiftEventDto gift);
 
     /// <summary>Tells specific connections they were removed (kick/ban/moved) and drops them from the room group.</summary>
     Task RemovedFromRoomAsync(long clubId, IReadOnlyCollection<string> connectionIds, string reason);

@@ -17,6 +17,7 @@ public interface IClubClient
     Task AnnouncementChanged(string? text);
     Task UserStateChanged(string userId, bool micEnabled, bool isSpeaking);
     Task RemovedFromRoom(string reason);
+    Task GiftReceived(Mehfil.Core.Economy.GiftEventDto gift);
 }
 
 /// <summary>Realtime endpoint at /hubs/club. Authenticated with the same JWT (access_token query string).</summary>

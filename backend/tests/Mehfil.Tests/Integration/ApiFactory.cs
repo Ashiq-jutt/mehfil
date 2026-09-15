@@ -8,7 +8,7 @@ using NSubstitute;
 namespace Mehfil.Tests.Integration;
 
 /// <summary>Boots the real API (migrations + seed included) against the fixture database with Google mocked.</summary>
-public sealed class ApiFactory(string connectionString) : WebApplicationFactory<Program>
+public sealed class ApiFactory(string connectionString, IReadOnlyDictionary<string, string?>? extraSettings = null) : WebApplicationFactory<Program>
 {
     public const string JwtSecret = "integration-test-signing-key-0123456789abcdef";
 
@@ -23,6 +23,10 @@ public sealed class ApiFactory(string connectionString) : WebApplicationFactory<
         builder.UseSetting("DevLogin:Enabled", "true");
         builder.UseSetting("Database:AutoMigrate", "true");
         builder.UseSetting("Database:SeedData", "true");
+        foreach (var (key, value) in extraSettings ?? new Dictionary<string, string?>())
+        {
+            builder.UseSetting(key, value);
+        }
 
         builder.ConfigureServices(services =>
         {

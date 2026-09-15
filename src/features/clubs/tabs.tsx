@@ -6,7 +6,6 @@ import { StyleSheet, View } from 'react-native';
 import { Button, PillTabs } from '../../components';
 import { flattenPages, useClubsFeed, useMyClubs, useTopClubs } from '../../hooks/useClubs';
 import type { MainStackParamList } from '../../navigation/types';
-import { toast } from '../../store/toastStore';
 import { spacing } from '../../theme';
 import { ClubGrid } from './ClubGrid';
 import { CountryChips } from './CountryChips';
@@ -15,13 +14,14 @@ import { WelcomeOfferBanner } from './WelcomeOfferBanner';
 import type { MyClubsFilter } from '../../api/types';
 
 export function ExploreTab() {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const feed = useClubsFeed('Explore');
   const top = useTopClubs();
 
   const header = (
     <View>
       {top.data && top.data.length > 0 ? <TopClubsBanner clubs={top.data} /> : null}
-      <WelcomeOfferBanner onPress={() => toast.info('The Shop arrives in phase 8.')} />
+      <WelcomeOfferBanner onPress={() => navigation.navigate('Shop')} />
       <CountryChips />
     </View>
   );

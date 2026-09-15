@@ -11,7 +11,10 @@ import { useRoomStore } from '../../store/roomStore';
 import { toast } from '../../store/toastStore';
 import { PlayerCardDialog } from '../profile/PlayerCardDialog';
 import { ChatFeed } from './ChatFeed';
+import { ClubLevelsDialog } from './dialogs/ClubLevelsDialog';
+import { GiftSheet } from './dialogs/GiftSheet';
 import { AnnouncementDialog, ExitDialog, SeatAction, SeatMenuDialog } from './dialogs/RoomDialogs';
+import { GiftOverlay } from './GiftOverlay';
 import { RoomBackdrop } from './RoomBackdrop';
 import { RoomHeader } from './RoomHeader';
 import { RoomBottomBar, RoomRightRail } from './RoomRails';
@@ -32,6 +35,8 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
   const [card, setCard] = useState<string | null>(null);
   const [announcementOpen, setAnnouncementOpen] = useState(false);
   const [savingAnnouncement, setSavingAnnouncement] = useState(false);
+  const [giftOpen, setGiftOpen] = useState(false);
+  const [levelsOpen, setLevelsOpen] = useState(false);
   const exitConfirmed = useRef(false);
 
   const canModerate = room.myRole === 'Owner' || room.myRole === 'Admin';
@@ -239,9 +244,9 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
 
               <RoomRightRail
                 totalHearts={club.totalHearts}
-                onPressTrophy={() => comingSoon('Clubs Levels', 8)}
-                onPressJar={() => comingSoon('The gift jar', 8)}
-                onPressOffer={() => comingSoon('Offers', 8)}
+                onPressTrophy={() => setLevelsOpen(true)}
+                onPressJar={() => setLevelsOpen(true)}
+                onPressOffer={() => navigation.navigate('Shop')}
                 onPressActivity={() => comingSoon('Activities', 9)}
               />
             </View>
@@ -253,7 +258,7 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
               onToggleMic={() => room.setMic(!room.micEnabled)}
               onToggleSpeaker={() => room.setSpeaker(!room.speakerEnabled)}
               onSend={room.sendMessage}
-              onPressGift={() => comingSoon('Gifts', 8)}
+              onPressGift={() => setGiftOpen(true)}
             />
           </KeyboardAvoidingView>
         ) : null}
@@ -276,6 +281,32 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
         onSave={saveAnnouncement}
       />
       <PlayerCardDialog visible={card !== null} onClose={() => setCard(null)} publicId={card} />
+      <GiftSheet
+        visible={giftOpen}
+        clubId={publicId}
+        seats={room.seats}
+        onClose={() => setGiftOpen(false)}
+        onOpenShop={() => {
+          setGiftOpen(false);
+          navigation.navigate('Shop');
+        }}
+      />
+      {club ? (
+        <ClubLevelsDialog
+          visible={levelsOpen}
+          onClose={() => setLevelsOpen(false)}
+          level={{
+            level: club.level,
+            jarHearts: club.jarHearts,
+            jarTarget: club.jarTarget,
+            jarResetsAt: club.jarResetsAt,
+            jarsCollected: club.jarsCollected,
+            jarsForNextLevel: club.jarsForNextLevel,
+            totalHearts: club.totalHearts,
+          }}
+        />
+      ) : null}
+      <GiftOverlay event={room.lastGift} onDone={room.clearGift} />
     </View>
   );
 }

@@ -63,6 +63,7 @@ the iOS client ID).
 | `DevLogin:Enabled` | Dev-only email login endpoint (ignored outside Development) |
 | `Agora:AppId` / `Agora:AppCertificate` | Agora project credentials for voice tokens. The certificate is **server-side only**; set it with user-secrets or `Agora__AppCertificate` |
 | `Agora:TokenMinutes` | RTC token lifetime (default 60) |
+| `Purchases:SandboxMode` | Accept hearts purchases without store verification (Development only; `true` in appsettings.Development.json) |
 
 Never commit real secrets. Locally use user-secrets:
 

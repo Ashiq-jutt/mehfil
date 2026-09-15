@@ -9,6 +9,7 @@ import { ClubInfoScreen } from '../features/clubs/ClubInfoScreen';
 import { ClubsHomeScreen } from '../features/clubs/ClubsHomeScreen';
 import { CreateClubScreen } from '../features/clubs/CreateClubScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
+import { ShopScreen } from '../features/economy/ShopScreen';
 import { ClubRoomScreen } from '../features/room/ClubRoomScreen';
 import { useAuthStore } from '../store/authStore';
 import type { AuthStackParamList, MainStackParamList } from './types';
@@ -47,6 +48,7 @@ function MainNavigator() {
       <MainStack.Screen name="Profile" component={ProfileScreen} options={{ animation: 'slide_from_bottom' }} />
       <MainStack.Screen name="ClubInfo" component={ClubInfoScreen} />
       <MainStack.Screen name="ClubRoom" component={ClubRoomScreen} options={{ gestureEnabled: false }} />
+      <MainStack.Screen name="Shop" component={ShopScreen} options={{ animation: 'slide_from_bottom' }} />
       <MainStack.Screen name="CreateClub" component={CreateClubScreen} options={{ animation: 'slide_from_bottom' }} />
     </MainStack.Navigator>
   );

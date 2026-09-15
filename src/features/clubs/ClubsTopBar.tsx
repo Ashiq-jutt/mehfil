@@ -27,7 +27,7 @@ export function ClubsTopBar({ onPressAccount }: Props) {
         <AvatarRing uri={resolveAssetUrl(user?.avatarUrl)} size={moderateScale(44)} />
       </Pressable>
 
-      <HeartsPill value={user?.heartsBalance ?? 0} onPressAdd={() => comingSoon('Shop', 8)} style={styles.hearts} />
+      <HeartsPill value={user?.heartsBalance ?? 0} onPressAdd={() => navigation.navigate('Shop')} style={styles.hearts} />
 
       <View style={styles.spacer} />
 

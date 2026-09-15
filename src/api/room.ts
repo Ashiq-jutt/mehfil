@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { ClubBanDto, ClubMessageDto, RoomStateDto, SeatDto, VoiceTokenDto } from './types';
+import type { ClubBanDto, ClubLevelDto, ClubMessageDto, RoomStateDto, SeatDto, SendGiftRequest, SendGiftResultDto, VoiceTokenDto } from './types';
 
 const room = (publicId: string) => `/clubs/${encodeURIComponent(publicId)}/room`;
 
@@ -62,6 +62,16 @@ export const roomApi = {
 
   async voiceToken(publicId: string): Promise<VoiceTokenDto> {
     const { data } = await apiClient.post<VoiceTokenDto>(`${room(publicId)}/voice-token`);
+    return data;
+  },
+
+  async sendGift(publicId: string, body: SendGiftRequest): Promise<SendGiftResultDto> {
+    const { data } = await apiClient.post<SendGiftResultDto>(`${room(publicId)}/gifts`, body);
+    return data;
+  },
+
+  async level(publicId: string): Promise<ClubLevelDto> {
+    const { data } = await apiClient.get<ClubLevelDto>(`${room(publicId)}/level`);
     return data;
   },
 

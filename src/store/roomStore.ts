@@ -2,7 +2,7 @@ import type { HubConnection } from '@microsoft/signalr';
 import { create } from 'zustand';
 
 import { roomApi, toApiError } from '../api';
-import type { ClubMessageDto, ClubRole, RoomClubDto, RoomStateDto, RoomUserDto, SeatDto } from '../api/types';
+import type { ClubMessageDto, ClubRole, GiftEventDto, RoomClubDto, RoomStateDto, RoomUserDto, SeatDto } from '../api/types';
 import { ensureConnected, getRoomConnection, parseHubError } from '../realtime/roomConnection';
 import { agoraVoice, VoiceStatus } from '../voice/agoraVoice';
 import { useAuthStore } from './authStore';
@@ -33,6 +33,8 @@ interface RoomState {
   voiceError: string | null;
   /** Set when the server removed us (kicked / banned / moved); the screen leaves. */
   removedReason: string | null;
+  /** Most recent gift for the floating banner; cleared by the screen when the animation ends. */
+  lastGift: GiftEventDto | null;
 
   join: (clubId: string) => Promise<void>;
   leave: () => Promise<void>;
@@ -44,6 +46,7 @@ interface RoomState {
   takeSeat: (index: number) => Promise<void>;
   leaveSeat: () => Promise<void>;
   applyState: (state: RoomStateDto) => void;
+  clearGift: () => void;
   reset: () => void;
 }
 
@@ -69,6 +72,7 @@ const initial = {
   voiceStatus: 'idle' as VoiceStatus,
   voiceError: null,
   removedReason: null,
+  lastGift: null as GiftEventDto | null,
 };
 
 export const useRoomStore = create<RoomState>((set, get) => {
@@ -139,6 +143,24 @@ export const useRoomStore = create<RoomState>((set, get) => {
         }
         return { users, seats, ...mine };
       });
+    });
+
+    hub.on('GiftReceived', (gift: GiftEventDto) => {
+      set(state => ({
+        lastGift: gift,
+        club: state.club
+          ? {
+              ...state.club,
+              level: gift.clubLevel.level,
+              jarHearts: gift.clubLevel.jarHearts,
+              jarTarget: gift.clubLevel.jarTarget,
+              jarResetsAt: gift.clubLevel.jarResetsAt,
+              jarsCollected: gift.clubLevel.jarsCollected,
+              jarsForNextLevel: gift.clubLevel.jarsForNextLevel,
+              totalHearts: gift.clubLevel.totalHearts,
+            }
+          : state.club,
+      }));
     });
 
     hub.on('RemovedFromRoom', (reason: string) => {
@@ -334,6 +356,10 @@ export const useRoomStore = create<RoomState>((set, get) => {
       } catch (error) {
         toast.error(toApiError(error).message);
       }
+    },
+
+    clearGift() {
+      set({ lastGift: null });
     },
 
     reset() {

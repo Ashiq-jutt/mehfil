@@ -111,6 +111,15 @@ describe('roomStore', () => {
     mockHandlers.UserLeft(newcomer.id, 2);
     expect(useRoomStore.getState().users[newcomer.id]).toBeUndefined();
 
+    mockHandlers.GiftReceived({
+      transactionId: 1, sender: other, receiver: me, gift: { code: 'rose', name: 'Rose', iconUrl: '', heartsPrice: 5 }, quantity: 10, hearts: 50,
+      clubLevel: { level: 21, jarHearts: 50, jarTarget: 500, jarResetsAt: '', jarsCollected: 0, jarsForNextLevel: 150, totalHearts: 14750 }, leveledUp: true, createdAt: '',
+    });
+    expect(useRoomStore.getState().club?.level).toBe(21);
+    expect(useRoomStore.getState().lastGift?.gift.code).toBe('rose');
+    useRoomStore.getState().clearGift();
+    expect(useRoomStore.getState().lastGift).toBeNull();
+
     mockHandlers.RemovedFromRoom('kicked');
     expect(useRoomStore.getState().removedReason).toBe('kicked');
   });

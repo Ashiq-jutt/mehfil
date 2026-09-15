@@ -25,6 +25,8 @@ public sealed class SignalRRoomNotifier(IHubContext<ClubHub, IClubClient> hub) :
     public Task UserStateChangedAsync(long clubId, string userPublicId, bool micEnabled, bool isSpeaking) =>
         Group(clubId).UserStateChanged(userPublicId, micEnabled, isSpeaking);
 
+    public Task GiftReceivedAsync(long clubId, Mehfil.Core.Economy.GiftEventDto gift) => Group(clubId).GiftReceived(gift);
+
     public async Task RemovedFromRoomAsync(long clubId, IReadOnlyCollection<string> connectionIds, string reason)
     {
         if (connectionIds.Count == 0)

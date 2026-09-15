@@ -2,6 +2,7 @@ using Mehfil.Core.Auth;
 using Mehfil.Core.Catalog;
 using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
+using Mehfil.Core.Economy;
 using Mehfil.Core.Moderation;
 using Mehfil.Core.Options;
 using Mehfil.Core.Rooms;
@@ -14,6 +15,7 @@ using Mehfil.Infrastructure.Catalog;
 using Mehfil.Infrastructure.Clubs;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Data.Seed;
+using Mehfil.Infrastructure.Economy;
 using Mehfil.Infrastructure.Moderation;
 using Mehfil.Infrastructure.Rooms;
 using Mehfil.Infrastructure.Royalty;
@@ -41,6 +43,7 @@ public static class DependencyInjection
         services.AddOptions<DevLoginOptions>().Bind(configuration.GetSection(DevLoginOptions.SectionName));
         services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.SectionName));
         services.AddOptions<AgoraOptions>().Bind(configuration.GetSection(AgoraOptions.SectionName));
+        services.AddOptions<PurchasesOptions>().Bind(configuration.GetSection(PurchasesOptions.SectionName));
 
         services.AddSingleton<IClock, SystemClock>();
         services.AddMemoryCache();
@@ -72,6 +75,16 @@ public static class DependencyInjection
         services.AddSingleton<RoomRegistry>();
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IVoiceService, VoiceService>();
+        services.AddScoped<IWalletService, WalletService>();
+        services.AddScoped<IGiftService, GiftService>();
+        if (configuration.GetValue<bool>($"{PurchasesOptions.SectionName}:SandboxMode"))
+        {
+            services.AddSingleton<IStoreReceiptVerifier, SandboxReceiptVerifier>();
+        }
+        else
+        {
+            services.AddSingleton<IStoreReceiptVerifier, UnconfiguredReceiptVerifier>();
+        }
 
         return services;
     }

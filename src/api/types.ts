@@ -331,6 +331,114 @@ export interface VoiceTokenDto {
   canPublish: boolean;
 }
 
+export type LedgerReason = 'Purchase' | 'GiftSent' | 'Reward' | 'AdminAdjustment' | 'WelcomeBonus' | 'Refund';
+export type PurchaseStatus = 'Pending' | 'Verified' | 'Rejected' | 'Refunded';
+export type DevicePlatform = 'Android' | 'Ios';
+
+export interface LedgerEntryDto {
+  id: number;
+  delta: number;
+  balanceAfter: number;
+  reason: LedgerReason;
+  note?: string | null;
+  createdAt: string;
+}
+
+export interface WalletDto {
+  balance: number;
+  heartsGifted: number;
+  heartsReceived: number;
+  royaltyPoints: number;
+  ledger: PagedResult<LedgerEntryDto>;
+}
+
+export interface BonusGiftDto {
+  giftCode: string;
+  giftName: string;
+  quantity: number;
+}
+
+export interface HeartsPackageDto {
+  code: string;
+  name: string;
+  hearts: number;
+  priceMinor: number;
+  currency: string;
+  royaltyPoints: number;
+  iconUrl?: string | null;
+  storeProductIdAndroid?: string | null;
+  storeProductIdIos?: string | null;
+  isBest: boolean;
+  isWelcomeOffer: boolean;
+  bonusGifts: BonusGiftDto[];
+  isAvailable: boolean;
+}
+
+export interface ShopDto {
+  balance: number;
+  sandboxMode: boolean;
+  packages: HeartsPackageDto[];
+}
+
+export interface VerifyPurchaseRequest {
+  platform: DevicePlatform;
+  productId: string;
+  transactionId: string;
+  receipt?: string | null;
+}
+
+export interface PurchaseResultDto {
+  purchaseId: number;
+  status: PurchaseStatus;
+  heartsGranted: number;
+  balance: number;
+  royaltyPoints: number;
+  royalLevel: RoyalLevel;
+  primeLevel: PrimeLevel;
+  alreadyProcessed: boolean;
+}
+
+export interface GiftDto {
+  code: string;
+  name: string;
+  iconUrl: string;
+  animationUrl?: string | null;
+  heartsPrice: number;
+}
+
+export interface SendGiftRequest {
+  giftCode: string;
+  quantity: number;
+  receiverId?: string | null;
+}
+
+export interface ClubLevelDto {
+  level: number;
+  jarHearts: number;
+  jarTarget: number;
+  jarResetsAt: string;
+  jarsCollected: number;
+  jarsForNextLevel: number;
+  totalHearts: number;
+}
+
+export interface GiftEventDto {
+  transactionId: number;
+  sender: RoomUserDto;
+  receiver?: RoomUserDto | null;
+  gift: GiftDto;
+  quantity: number;
+  hearts: number;
+  clubLevel: ClubLevelDto;
+  leveledUp: boolean;
+  createdAt: string;
+}
+
+export interface SendGiftResultDto {
+  event: GiftEventDto;
+  balance: number;
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;
