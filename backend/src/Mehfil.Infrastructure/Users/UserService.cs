@@ -184,6 +184,30 @@ public sealed class UserService(
         return await GetProfileAsync(userId, ct);
     }
 
+    public async Task<IReadOnlyList<UserSearchResultDto>> SearchAsync(string query, long callerId, int limit, CancellationToken ct)
+    {
+        var q = query.Trim();
+        if (q.Length < 2)
+        {
+            return [];
+        }
+
+        var take = Math.Clamp(limit, 1, 50);
+        var upper = q.ToUpperInvariant();
+
+        var results = await db.Users.AsNoTracking()
+            .Where(u => u.Id != callerId && u.Status == UserStatus.Active &&
+                        (u.PublicId == upper || u.DisplayName.Contains(q)))
+            .OrderByDescending(u => u.PublicId == upper)
+            .ThenByDescending(u => u.DisplayName.StartsWith(q))
+            .ThenBy(u => u.DisplayName)
+            .Take(take)
+            .Select(u => new UserSearchResultDto(u.PublicId, u.DisplayName, u.AvatarUrl, u.Level, u.IsOnline))
+            .ToListAsync(ct);
+
+        return results;
+    }
+
     // ------------------------------------------------------------------
 
     private async Task<User> LoadForUpdateAsync(long userId, CancellationToken ct) =>

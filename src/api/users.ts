@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { Gender, ProfileDto, PublicProfileDto, UpdateProfileRequest, UserDto } from './types';
+import type { Gender, ProfileDto, PublicProfileDto, UpdateProfileRequest, UserDto, UserSearchResultDto } from './types';
 
 export interface AvatarFile {
   uri: string;
@@ -35,6 +35,11 @@ export const usersApi = {
 
   async setBirthday(day: number, month: number): Promise<ProfileDto> {
     const { data } = await apiClient.put<ProfileDto>('/users/me/birthday', { day, month });
+    return data;
+  },
+
+  async search(query: string, limit = 20): Promise<UserSearchResultDto[]> {
+    const { data } = await apiClient.get<UserSearchResultDto[]>('/users/search', { params: { q: query, limit } });
     return data;
   },
 

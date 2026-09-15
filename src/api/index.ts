@@ -6,4 +6,5 @@ export type { AvatarFile } from './users';
 export { catalogApi } from './catalog';
 export { royaltyApi } from './royalty';
 export { clubsApi, nextPageOf } from './clubs';
+export { reportsApi } from './reports';
 export type * from './types';

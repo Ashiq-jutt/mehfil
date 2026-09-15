@@ -203,6 +203,58 @@ export interface FollowResultDto {
   followerCount: number;
 }
 
+export interface ClubMemberDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  level: number;
+  role: ClubRole;
+  isOnline: boolean;
+  joinedAt: string;
+}
+
+export interface ClubAdminsDto {
+  max: number;
+  admins: ClubMemberDto[];
+}
+
+export interface ClubRuleDto {
+  title: string;
+  text: string;
+}
+
+export interface UserSearchResultDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  level: number;
+  isOnline: boolean;
+}
+
+export type ReportTargetType = 'User' | 'Club' | 'Message';
+export type ReportStatus = 'Open' | 'Reviewed' | 'ActionTaken' | 'Dismissed';
+
+export interface ReportReasonDto {
+  code: string;
+  label: string;
+}
+
+export interface CreateReportRequest {
+  targetType: ReportTargetType;
+  targetId: string;
+  reason: string;
+  details?: string | null;
+}
+
+export interface ReportDto {
+  id: number;
+  targetType: ReportTargetType;
+  targetId: string;
+  reason: string;
+  status: ReportStatus;
+  createdAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;

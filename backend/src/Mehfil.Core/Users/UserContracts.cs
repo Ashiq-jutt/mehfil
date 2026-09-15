@@ -74,6 +74,9 @@ public sealed record PublicProfileDto(
 
 public sealed record UpdateProfileRequest(string? DisplayName, string? Signature, string? CountryCode);
 
+/// <summary>Compact row for pickers (add admin, invite).</summary>
+public sealed record UserSearchResultDto(string Id, string DisplayName, string? AvatarUrl, int Level, bool IsOnline);
+
 public sealed record SetGenderRequest(Gender Gender);
 
 public sealed record SetBirthdayRequest(int Day, int Month);
@@ -121,4 +124,7 @@ public interface IUserService
 
     /// <summary>Stores an already client-resized image (JPEG/PNG/WebP, ≤ 5 MB) and returns the updated profile.</summary>
     Task<ProfileDto> SetAvatarAsync(long userId, Stream image, string? contentType, CancellationToken ct);
+
+    /// <summary>Exact public id match first, then display-name prefix/contains matches. Excludes the caller.</summary>
+    Task<IReadOnlyList<UserSearchResultDto>> SearchAsync(string query, long callerId, int limit, CancellationToken ct);
 }

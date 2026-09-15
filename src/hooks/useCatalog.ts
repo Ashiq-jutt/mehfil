@@ -13,6 +13,26 @@ export function useCountries() {
   });
 }
 
+export function useClubRules(enabled = true) {
+  const status = useAuthStore(s => s.status);
+  return useQuery({
+    queryKey: ['catalog', 'club-rules'],
+    queryFn: catalogApi.getClubRules,
+    enabled: enabled && status === 'signedIn',
+    staleTime: 60 * 60_000,
+  });
+}
+
+export function useReportReasons(enabled = true) {
+  const status = useAuthStore(s => s.status);
+  return useQuery({
+    queryKey: ['catalog', 'report-reasons'],
+    queryFn: catalogApi.getReportReasons,
+    enabled: enabled && status === 'signedIn',
+    staleTime: 60 * 60_000,
+  });
+}
+
 export function useClubCategories() {
   const status = useAuthStore(s => s.status);
   return useQuery({

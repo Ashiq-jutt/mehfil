@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, AvatarRing, DialogCard, ErrorState, LoadingState, SectionRibbon } from '../../components';
+import { AppText, AvatarRing, Button, DialogCard, ErrorState, LoadingState, SectionRibbon } from '../../components';
 import { RoyalBadge } from '../../components/badges/RoyalBadge';
 import { useProfile } from '../../hooks/useProfile';
 import { usePublicProfile } from '../../hooks/useRoyalty';
+import { useAuthStore } from '../../store/authStore';
 import { colors, moderateScale, radius, spacing } from '../../theme';
 import { resolveAssetUrl } from '../../utils/assets';
 import { formatCompact, formatHours } from '../../utils/format';
+import { ReportDialog } from '../shared/ReportDialog';
 import type { AchievementsDto, PrimeLevel, RoyalLevel, StatsDto } from '../../api/types';
 
 type CardModel = {
@@ -36,9 +38,11 @@ type Props = {
 
 /** The player card modal (tap on an avatar anywhere in the app). */
 export function PlayerCardDialog({ visible, onClose, publicId }: Props) {
-  const isMe = publicId === 'me';
+  const myId = useAuthStore(s => s.user?.id);
+  const isMe = publicId === 'me' || (!!publicId && publicId === myId);
   const me = useProfile();
   const other = usePublicProfile(visible && publicId && !isMe ? publicId : null);
+  const [report, setReport] = useState(false);
 
   const model: CardModel | null = isMe
     ? me.data
@@ -59,12 +63,15 @@ export function PlayerCardDialog({ visible, onClose, publicId }: Props) {
     <DialogCard visible={visible} onClose={onClose}>
       {loading && !model ? <LoadingState /> : null}
       {error && !model ? <ErrorState title="Could not load player" message={String((error as Error).message)} /> : null}
-      {model ? <CardBody model={model} isMe={isMe} /> : null}
+      {model ? <CardBody model={model} isMe={isMe} onReport={() => setReport(true)} /> : null}
+      {model && !isMe ? (
+        <ReportDialog visible={report} onClose={() => setReport(false)} targetType="User" targetId={model.id} targetLabel={`User · ${model.displayName}`} />
+      ) : null}
     </DialogCard>
   );
 }
 
-function CardBody({ model, isMe }: { model: CardModel; isMe: boolean }) {
+function CardBody({ model, isMe, onReport }: { model: CardModel; isMe: boolean; onReport: () => void }) {
   const royalty = model.primeLevel !== 'None' ? model.primeLevel : model.royalLevel !== 'None' ? model.royalLevel : null;
 
   return (
@@ -106,6 +113,8 @@ function CardBody({ model, isMe }: { model: CardModel; isMe: boolean }) {
         <Field label="Top gifter" value={`${model.achievements.topGifterTimes}×`} />
         <Field label="Top receiver" value={`${model.achievements.topReceiverTimes}×`} />
       </View>
+
+      {!isMe ? <Button label="Report user" variant="ghost" icon="alert" onPress={onReport} style={styles.report} /> : null}
     </View>
   );
 }
@@ -160,5 +169,8 @@ const styles = StyleSheet.create({
   },
   ribbon: {
     marginVertical: spacing.sm,
+  },
+  report: {
+    marginTop: spacing.sm,
   },
 });

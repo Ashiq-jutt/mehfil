@@ -2,6 +2,7 @@ using Mehfil.Core.Auth;
 using Mehfil.Core.Catalog;
 using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
+using Mehfil.Core.Moderation;
 using Mehfil.Core.Options;
 using Mehfil.Core.Royalty;
 using Mehfil.Core.Storage;
@@ -11,6 +12,7 @@ using Mehfil.Infrastructure.Catalog;
 using Mehfil.Infrastructure.Clubs;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Data.Seed;
+using Mehfil.Infrastructure.Moderation;
 using Mehfil.Infrastructure.Royalty;
 using Mehfil.Infrastructure.Storage;
 using Mehfil.Infrastructure.Users;
@@ -60,6 +62,8 @@ public static class DependencyInjection
         services.AddScoped<ICatalogService, CatalogService>();
         services.AddScoped<IRoyaltyService, RoyaltyService>();
         services.AddScoped<IClubService, ClubService>();
+        services.AddScoped<IClubMembersService, ClubMembersService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return services;
     }

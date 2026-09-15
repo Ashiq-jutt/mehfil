@@ -25,8 +25,13 @@ import { resolveAssetUrl } from '../../utils/assets';
 import { formatCompact, formatHours } from '../../utils/format';
 import { pickAvatarImage } from '../../utils/pickImage';
 import { PlayerCardDialog } from '../profile/PlayerCardDialog';
+import { ReportDialog } from '../shared/ReportDialog';
 import { ClubCover } from './ClubCover';
+import { AdminsDialog } from './dialogs/AdminsDialog';
+import { ClubRulesDialog } from './dialogs/ClubRulesDialog';
 import { styles } from './ClubInfoScreen.styles';
+
+type Dialog = 'admins' | 'rules' | 'report' | null;
 
 const TABS = [
   { key: 'highlights', label: 'Highlights' },
@@ -40,7 +45,8 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
   const follow = useFollowClub();
   const uploadCover = useUploadClubCover(publicId);
   const [tab, setTab] = useState('info');
-  const [ownerCard, setOwnerCard] = useState(false);
+  const [card, setCard] = useState<string | null>(null);
+  const [dialog, setDialog] = useState<Dialog>(null);
 
   const canManage = club?.myRole === 'Owner' || club?.myRole === 'Admin';
 
@@ -200,7 +206,7 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
             </View>
           ) : (
             <View style={styles.section}>
-              <Pressable accessibilityRole="button" onPress={() => setOwnerCard(true)}>
+              <Pressable accessibilityRole="button" onPress={() => setCard(club.owner.id)}>
                 <Panel variant="magenta" style={styles.ownerCard}>
                   <View style={styles.ownerRow}>
                     <AvatarRing uri={resolveAssetUrl(club.owner.avatarUrl)} size={moderateScale(52)} />
@@ -216,7 +222,7 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
                 </Panel>
               </Pressable>
 
-              <Pressable accessibilityRole="button" onPress={() => toast.info('Admin management arrives in phase 5.')}>
+              <Pressable accessibilityRole="button" onPress={() => setDialog('admins')}>
                 <Panel variant="magenta" style={styles.adminCard}>
                   <View style={styles.ownerRow}>
                     <View style={styles.adminIcon}>
@@ -243,8 +249,8 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
               </Panel>
 
               <View style={styles.smallActions}>
-                <PillButton onPress={() => toast.info('Club rules arrive in phase 5.')}>Rules</PillButton>
-                <PillButton onPress={() => toast.info('Reporting arrives in phase 5.')}>
+                <PillButton onPress={() => setDialog('rules')}>Rules</PillButton>
+                <PillButton onPress={() => setDialog('report')}>
                   <View style={styles.reportInner}>
                     <Icon name="alert" size={moderateScale(14)} color={colors.textPrimary} />
                     <AppText variant="label">Report</AppText>
@@ -262,7 +268,23 @@ export function ClubInfoScreen({ route, navigation }: MainStackScreenProps<'Club
         </View>
       ) : null}
 
-      {club ? <PlayerCardDialog visible={ownerCard} onClose={() => setOwnerCard(false)} publicId={club.owner.id} /> : null}
+      {club ? (
+        <>
+          <PlayerCardDialog visible={card !== null} onClose={() => setCard(null)} publicId={card} />
+          <AdminsDialog
+            visible={dialog === 'admins'}
+            onClose={() => setDialog(null)}
+            clubId={club.id}
+            isOwner={club.myRole === 'Owner'}
+            onPressMember={member => {
+              setDialog(null);
+              setCard(member.id);
+            }}
+          />
+          <ClubRulesDialog visible={dialog === 'rules'} onClose={() => setDialog(null)} club={club} />
+          <ReportDialog visible={dialog === 'report'} onClose={() => setDialog(null)} targetType="Club" targetId={club.id} targetLabel={`Club · ${club.name}`} />
+        </>
+      ) : null}
     </Screen>
   );
 }

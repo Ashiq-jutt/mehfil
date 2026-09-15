@@ -57,6 +57,12 @@ public sealed class UsersController(IUserService users) : ApiControllerBase
         return await users.SetAvatarAsync(CurrentUserId, stream, file.ContentType, ct);
     }
 
+    /// <summary>Find users by public id or display name (for adding admins / inviting). Min 2 characters.</summary>
+    [HttpGet("search")]
+    [ProducesResponseType<IReadOnlyList<UserSearchResultDto>>(StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<UserSearchResultDto>> Search([FromQuery] string q = "", [FromQuery] int limit = 20, CancellationToken ct = default) =>
+        users.SearchAsync(q, CurrentUserId, limit, ct);
+
     /// <summary>Another user's player card by public id (e.g. MOBI4875).</summary>
     [HttpGet("{publicId}")]
     [ProducesResponseType<PublicProfileDto>(StatusCodes.Status200OK)]
