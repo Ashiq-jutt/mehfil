@@ -8,7 +8,8 @@ Phase 2 (app foundation: Firebase removed, Mehfil identity, theme, navigation, a
 Phase 3 (Profile + Royalty: profile screen, gender-once, birthday, avatar upload, player card, royalty tiers, countries catalog) delivered.
 Phase 4 (Clubs Home: Explore/Hot/My feeds, country filter, Enter-a-Club lookup, create/edit club, cover upload, follow, Club Info basics) delivered.
 Phase 5 (Club Info completion: admin list with 7-admin cap and owner add/remove, user search, INFO/RULES dialog, report user/club) delivered.
-Phase 6 (Live room over SignalR: presence, 10 seats with owner seat, chat with history, announcements, mic state, lock/mute/kick/ban, exit dialog) delivered — voice audio follows in phase 7.
+Phase 6 (Live room over SignalR: presence, 10 seats with owner seat, chat with history, announcements, mic state, lock/mute/kick/ban, exit dialog) delivered.
+Phase 7 (Agora voice: server-side AccessToken2 tokens, listener/publisher roles tied to seats and mutes, speaker routing, token renewal, speaking indicators from audio levels) delivered.
 
 This plan replaces the Firebase-only backend described in `detailed-command.txt`
 with a **C# / ASP.NET Core (MVC controllers) backend using EF Core Code First,

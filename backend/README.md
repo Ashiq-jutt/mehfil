@@ -61,6 +61,8 @@ the iOS client ID).
 | `Jwt:AccessTokenMinutes` / `Jwt:RefreshTokenDays` | Token lifetimes (15 min / 30 days) |
 | `Google:ClientIds` | Accepted audiences for Google ID tokens |
 | `DevLogin:Enabled` | Dev-only email login endpoint (ignored outside Development) |
+| `Agora:AppId` / `Agora:AppCertificate` | Agora project credentials for voice tokens. The certificate is **server-side only**; set it with user-secrets or `Agora__AppCertificate` |
+| `Agora:TokenMinutes` | RTC token lifetime (default 60) |
 
 Never commit real secrets. Locally use user-secrets:
 

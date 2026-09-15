@@ -8,6 +8,7 @@ using Mehfil.Core.Rooms;
 using Mehfil.Core.Royalty;
 using Mehfil.Core.Storage;
 using Mehfil.Core.Users;
+using Mehfil.Core.Voice;
 using Mehfil.Infrastructure.Auth;
 using Mehfil.Infrastructure.Catalog;
 using Mehfil.Infrastructure.Clubs;
@@ -18,6 +19,7 @@ using Mehfil.Infrastructure.Rooms;
 using Mehfil.Infrastructure.Royalty;
 using Mehfil.Infrastructure.Storage;
 using Mehfil.Infrastructure.Users;
+using Mehfil.Infrastructure.Voice;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +40,7 @@ public static class DependencyInjection
         services.AddOptions<GoogleAuthOptions>().Bind(configuration.GetSection(GoogleAuthOptions.SectionName));
         services.AddOptions<DevLoginOptions>().Bind(configuration.GetSection(DevLoginOptions.SectionName));
         services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.SectionName));
+        services.AddOptions<AgoraOptions>().Bind(configuration.GetSection(AgoraOptions.SectionName));
 
         services.AddSingleton<IClock, SystemClock>();
         services.AddMemoryCache();
@@ -68,6 +71,7 @@ public static class DependencyInjection
         services.AddScoped<IReportService, ReportService>();
         services.AddSingleton<RoomRegistry>();
         services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IVoiceService, VoiceService>();
 
         return services;
     }

@@ -22,7 +22,24 @@ jest.mock('../../realtime/roomConnection', () => ({
 }));
 
 jest.mock('../../api/room', () => ({
-  roomApi: { messages: jest.fn(async () => []), takeSeat: jest.fn(async () => undefined), leaveSeat: jest.fn(async () => undefined) },
+  roomApi: {
+    messages: jest.fn(async () => []),
+    takeSeat: jest.fn(async () => undefined),
+    leaveSeat: jest.fn(async () => undefined),
+    voiceToken: jest.fn(async () => ({ appId: 'app', channel: '29451765', uid: 1, token: 't', expiresAt: '', canPublish: true })),
+  },
+}));
+
+jest.mock('../../voice/agoraVoice', () => ({
+  agoraVoice: {
+    join: jest.fn(async () => undefined),
+    leave: jest.fn(),
+    setMicEnabled: jest.fn(),
+    setSpeakerEnabled: jest.fn(),
+    renewToken: jest.fn(),
+    requestMicPermission: jest.fn(async () => true),
+    isInChannel: false,
+  },
 }));
 
 const me: RoomUserDto = { id: 'MOBI4875', displayName: 'Mobile Developer', level: 2, role: 'Member', gender: 'Male', royalLevel: 'None', micEnabled: false, isSpeaking: false };

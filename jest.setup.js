@@ -52,6 +52,34 @@ jest.mock('react-native-image-picker', () => ({
   launchCamera: jest.fn(async () => ({ didCancel: true })),
 }));
 
+jest.mock('react-native-agora', () => {
+  const engine = {
+    initialize: jest.fn(() => 0),
+    registerEventHandler: jest.fn(() => true),
+    enableAudio: jest.fn(() => 0),
+    setAudioProfile: jest.fn(() => 0),
+    enableAudioVolumeIndication: jest.fn(() => 0),
+    setDefaultAudioRouteToSpeakerphone: jest.fn(() => 0),
+    joinChannel: jest.fn(() => 0),
+    leaveChannel: jest.fn(() => 0),
+    setClientRole: jest.fn(() => 0),
+    enableLocalAudio: jest.fn(() => 0),
+    muteLocalAudioStream: jest.fn(() => 0),
+    muteAllRemoteAudioStreams: jest.fn(() => 0),
+    setEnableSpeakerphone: jest.fn(() => 0),
+    renewToken: jest.fn(() => 0),
+    release: jest.fn(),
+  };
+  return {
+    createAgoraRtcEngine: () => engine,
+    ChannelProfileType: { ChannelProfileLiveBroadcasting: 1 },
+    ClientRoleType: { ClientRoleBroadcaster: 1, ClientRoleAudience: 2 },
+    AudioProfileType: { AudioProfileSpeechStandard: 1 },
+    AudioScenarioType: { AudioScenarioChatroom: 5 },
+    ConnectionStateType: { ConnectionStateConnected: 3, ConnectionStateFailed: 5 },
+  };
+});
+
 jest.mock('@microsoft/signalr', () => {
   class HubConnectionBuilder {
     withUrl() {

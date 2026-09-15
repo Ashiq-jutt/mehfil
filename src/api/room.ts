@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { ClubBanDto, ClubMessageDto, RoomStateDto, SeatDto } from './types';
+import type { ClubBanDto, ClubMessageDto, RoomStateDto, SeatDto, VoiceTokenDto } from './types';
 
 const room = (publicId: string) => `/clubs/${encodeURIComponent(publicId)}/room`;
 
@@ -58,6 +58,11 @@ export const roomApi = {
 
   async unbanUser(publicId: string, userPublicId: string): Promise<void> {
     await apiClient.delete(`${room(publicId)}/bans/${encodeURIComponent(userPublicId)}`);
+  },
+
+  async voiceToken(publicId: string): Promise<VoiceTokenDto> {
+    const { data } = await apiClient.post<VoiceTokenDto>(`${room(publicId)}/voice-token`);
+    return data;
   },
 
   async bans(publicId: string): Promise<ClubBanDto[]> {

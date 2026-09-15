@@ -31,3 +31,6 @@ public sealed class ForbiddenException(string code, string message) : AppExcepti
 public sealed class UnauthorizedException(string code, string message) : AppException(401, code, message);
 
 public sealed class BadRequestException(string code, string message) : AppException(400, code, message);
+
+/// <summary>503: a dependency or feature is not configured / available.</summary>
+public sealed class AppUnavailableException(string code, string message) : AppException(503, code, message);

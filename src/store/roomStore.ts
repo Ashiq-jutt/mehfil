@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { roomApi, toApiError } from '../api';
 import type { ClubMessageDto, ClubRole, RoomClubDto, RoomStateDto, RoomUserDto, SeatDto } from '../api/types';
 import { ensureConnected, getRoomConnection, parseHubError } from '../realtime/roomConnection';
+import { agoraVoice, VoiceStatus } from '../voice/agoraVoice';
 import { useAuthStore } from './authStore';
 import { toast } from './toastStore';
 
@@ -27,6 +28,9 @@ interface RoomState {
   hasMoreHistory: boolean;
   loadingHistory: boolean;
   micEnabled: boolean;
+  speakerEnabled: boolean;
+  voiceStatus: VoiceStatus;
+  voiceError: string | null;
   /** Set when the server removed us (kicked / banned / moved); the screen leaves. */
   removedReason: string | null;
 
@@ -35,6 +39,8 @@ interface RoomState {
   sendMessage: (text: string) => Promise<boolean>;
   loadOlder: () => Promise<void>;
   setMic: (enabled: boolean) => Promise<void>;
+  setSpeaker: (enabled: boolean) => void;
+  connectVoice: () => Promise<void>;
   takeSeat: (index: number) => Promise<void>;
   leaveSeat: () => Promise<void>;
   applyState: (state: RoomStateDto) => void;
@@ -59,6 +65,9 @@ const initial = {
   hasMoreHistory: true,
   loadingHistory: false,
   micEnabled: false,
+  speakerEnabled: true,
+  voiceStatus: 'idle' as VoiceStatus,
+  voiceError: null,
   removedReason: null,
 };
 
@@ -100,6 +109,9 @@ export const useRoomStore = create<RoomState>((set, get) => {
         const seats = state.seats.map(s => (s.index === seat.index ? seat : s));
         const mine = seats.find(s => s.user?.id === myId())?.index ?? null;
         const lostSeat = state.mySeatIndex !== null && mine === null;
+        if (lostSeat && state.micEnabled) {
+          agoraVoice.setMicEnabled(false);
+        }
         return { seats, mySeatIndex: mine, micEnabled: lostSeat ? false : state.micEnabled };
       });
     });
@@ -122,11 +134,15 @@ export const useRoomStore = create<RoomState>((set, get) => {
         const users = user ? { ...state.users, [userId]: { ...user, micEnabled, isSpeaking } } : state.users;
         const seats = state.seats.map(s => (s.user?.id === userId ? { ...s, user: { ...s.user!, micEnabled, isSpeaking } } : s));
         const mine = userId === myId() ? { micEnabled } : {};
+        if (userId === myId() && !micEnabled && state.micEnabled) {
+          agoraVoice.setMicEnabled(false); // an admin muted our seat
+        }
         return { users, seats, ...mine };
       });
     });
 
     hub.on('RemovedFromRoom', (reason: string) => {
+      agoraVoice.leave();
       set({ removedReason: reason, status: 'idle' });
     });
 
@@ -146,6 +162,9 @@ export const useRoomStore = create<RoomState>((set, get) => {
         get().applyState(state);
         set({ status: 'connected' });
         appendFeed(systemItem('Reconnected'));
+        if (!agoraVoice.isInChannel) {
+          get().connectVoice().catch(() => undefined);
+        }
       } catch (error) {
         set({ status: 'error', error: parseHubError(error).message });
       }
@@ -188,10 +207,42 @@ export const useRoomStore = create<RoomState>((set, get) => {
         const state = await hub.invoke<RoomStateDto>('JoinRoom', clubId);
         get().applyState(state);
         set({ status: 'connected' });
+        get().connectVoice().catch(() => undefined);
       } catch (error) {
         const { message } = parseHubError(error);
         set({ status: 'error', error: message });
       }
+    },
+
+    async connectVoice() {
+      const { clubId } = get();
+      if (!clubId) {
+        return;
+      }
+      try {
+        const token = await roomApi.voiceToken(clubId);
+        await agoraVoice.join(token, {
+          onStatus: (voiceStatus, detail) => set({ voiceStatus, voiceError: voiceStatus === 'failed' ? detail ?? 'Voice failed' : null }),
+          onLocalSpeaking: speaking => {
+            getRoomConnection().invoke('SetSpeaking', speaking).catch(() => undefined);
+          },
+          onTokenExpiring: () => {
+            const id = get().clubId;
+            if (id) {
+              roomApi.voiceToken(id).then(t => agoraVoice.renewToken(t.token)).catch(() => undefined);
+            }
+          },
+        });
+        agoraVoice.setSpeakerEnabled(get().speakerEnabled);
+      } catch (error) {
+        const apiError = toApiError(error);
+        set({ voiceStatus: 'failed', voiceError: apiError.status === 503 ? 'Voice is not configured on the server yet.' : apiError.message });
+      }
+    },
+
+    setSpeaker(enabled) {
+      set({ speakerEnabled: enabled });
+      agoraVoice.setSpeakerEnabled(enabled);
     },
 
     async leave() {
@@ -203,6 +254,7 @@ export const useRoomStore = create<RoomState>((set, get) => {
       } catch {
         // Already disconnected; nothing to do.
       } finally {
+        agoraVoice.leave();
         set({ ...initial });
       }
     },
@@ -244,10 +296,15 @@ export const useRoomStore = create<RoomState>((set, get) => {
     },
 
     async setMic(enabled) {
+      if (enabled && !(await agoraVoice.requestMicPermission())) {
+        toast.error('Microphone permission is required to talk.');
+        return;
+      }
       try {
         const hub = await ensureConnected();
         await hub.invoke('SetMic', enabled);
         set({ micEnabled: enabled });
+        agoraVoice.setMicEnabled(enabled);
       } catch (error) {
         toast.error(parseHubError(error).message);
       }
@@ -272,6 +329,7 @@ export const useRoomStore = create<RoomState>((set, get) => {
       }
       try {
         await roomApi.leaveSeat(clubId);
+        agoraVoice.setMicEnabled(false);
         set({ micEnabled: false });
       } catch (error) {
         toast.error(toApiError(error).message);

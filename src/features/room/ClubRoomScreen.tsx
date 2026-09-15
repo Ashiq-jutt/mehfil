@@ -32,7 +32,6 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
   const [card, setCard] = useState<string | null>(null);
   const [announcementOpen, setAnnouncementOpen] = useState(false);
   const [savingAnnouncement, setSavingAnnouncement] = useState(false);
-  const [speakerOn, setSpeakerOn] = useState(true);
   const exitConfirmed = useRef(false);
 
   const canModerate = room.myRole === 'Owner' || room.myRole === 'Admin';
@@ -207,6 +206,12 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
                   </AppText>
                 </Pressable>
 
+                {room.voiceStatus === 'failed' ? (
+                  <View style={styles.reconnecting}>
+                    <AppText variant="tiny">Voice: {room.voiceError}</AppText>
+                    <Button label="Retry voice" variant="ghost" onPress={() => room.connectVoice()} style={styles.reconnectButton} />
+                  </View>
+                ) : null}
                 {room.status === 'reconnecting' ? (
                   <View style={styles.reconnecting}>
                     <AppText variant="tiny">Reconnecting…</AppText>
@@ -244,12 +249,9 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
             <RoomBottomBar
               micEnabled={room.micEnabled}
               canUseMic={room.mySeatIndex !== null}
-              speakerOn={speakerOn}
+              speakerOn={room.speakerEnabled}
               onToggleMic={() => room.setMic(!room.micEnabled)}
-              onToggleSpeaker={() => {
-                setSpeakerOn(v => !v);
-                comingSoon('Audio', 7);
-              }}
+              onToggleSpeaker={() => room.setSpeaker(!room.speakerEnabled)}
               onSend={room.sendMessage}
               onPressGift={() => comingSoon('Gifts', 8)}
             />

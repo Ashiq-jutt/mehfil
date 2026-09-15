@@ -322,6 +322,15 @@ export interface ClubBanDto {
   createdAt: string;
 }
 
+export interface VoiceTokenDto {
+  appId: string;
+  channel: string;
+  uid: number;
+  token: string;
+  expiresAt: string;
+  canPublish: boolean;
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;
