@@ -8,13 +8,8 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# React Native Firebase requires static frameworks on iOS.
-use_frameworks! :linkage => :static
-$RNFirebaseAsStaticFramework = true
-# Resolve Firebase iOS SDK via CocoaPods (SPM + static linkage is unsupported).
-$RNFirebaseDisableSPM = true
 
-target 'VoxNest' do
+target 'Mehfil' do
   config = use_native_modules!
 
   use_react_native!(

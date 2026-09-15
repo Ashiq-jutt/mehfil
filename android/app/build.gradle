@@ -1,7 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: "com.google.gms.google-services"
 
 // react-native-config: exposes .env values to native code and JS
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -81,15 +80,15 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.voxnest.app"
+    namespace "com.jalopy.mehfil"
     defaultConfig {
-        applicationId "com.voxnest.app"
+        applicationId "com.jalopy.mehfil"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         // Needed by react-native-config when namespace != package of BuildConfig lookup
-        resValue "string", "build_config_package", "com.voxnest.app"
+        resValue "string", "build_config_package", "com.jalopy.mehfil"
     }
     signingConfigs {
         debug {

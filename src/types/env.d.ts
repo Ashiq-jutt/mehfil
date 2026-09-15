@@ -1,13 +1,10 @@
 declare module 'react-native-config' {
   export interface NativeConfig {
-    FIREBASE_FUNCTIONS_REGION?: string;
-    USE_FIREBASE_EMULATOR?: string;
-    FIREBASE_EMULATOR_HOST_ANDROID?: string;
-    FIREBASE_EMULATOR_HOST_IOS?: string;
-    APP_CHECK_ENABLED?: string;
+    API_BASE_URL?: string;
     GOOGLE_WEB_CLIENT_ID?: string;
     GOOGLE_IOS_CLIENT_ID?: string;
     AGORA_APP_ID?: string;
+    DEV_LOGIN_ENABLED?: string;
   }
 
   export const Config: NativeConfig;

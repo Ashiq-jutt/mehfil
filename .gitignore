@@ -66,19 +66,10 @@ yarn-error.log
 # testing
 /coverage
 
-# Environment & Firebase native config (never commit)
+# Environment (never commit)
 .env
 .env.*
 !.env.example
-android/app/google-services.json
-ios/VoxNest/GoogleService-Info.plist
-
-# Firebase CLI / emulators
-.firebase/
-firebase-debug*.log
-firestore-debug.log
-ui-debug.log
-emulator-data/
 
 # Yarn
 .yarn/*

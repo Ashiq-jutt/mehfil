@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Fredoka-Bold.ttf",
+      "sha1": "cc70a76bf8ce3d5ffdaaf3c202b3c2caf7a6efe6"
+    },
+    {
+      "path": "src/assets/fonts/Fredoka-Medium.ttf",
+      "sha1": "b786e5e7f56163c21b3fc7ca62869d269213a038"
+    },
+    {
+      "path": "src/assets/fonts/Fredoka-SemiBold.ttf",
+      "sha1": "1370201e150981fb0de01e30e1bc410af97fa35e"
+    },
+    {
+      "path": "src/assets/fonts/Nunito-Bold.ttf",
+      "sha1": "1112fc5a53604f405ca97e240d683340aca8d397"
+    },
+    {
+      "path": "src/assets/fonts/Nunito-ExtraBold.ttf",
+      "sha1": "036fb04d28ba708de3f4bf506e89fd6c3bbf9439"
+    },
+    {
+      "path": "src/assets/fonts/Nunito-Regular.ttf",
+      "sha1": "5d381977bffa56314e2caaf826a6578d82abae0c"
+    },
+    {
+      "path": "src/assets/fonts/Nunito-SemiBold.ttf",
+      "sha1": "655b62282a1448ef8a3aa42a678be6b6376a15c3"
+    }
+  ]
+}
