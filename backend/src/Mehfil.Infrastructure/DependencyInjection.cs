@@ -5,6 +5,7 @@ using Mehfil.Core.Common;
 using Mehfil.Core.Economy;
 using Mehfil.Core.Leaderboards;
 using Mehfil.Core.Moderation;
+using Mehfil.Core.Notifications;
 using Mehfil.Core.Options;
 using Mehfil.Core.Rooms;
 using Mehfil.Core.Royalty;
@@ -20,6 +21,7 @@ using Mehfil.Infrastructure.Data.Seed;
 using Mehfil.Infrastructure.Economy;
 using Mehfil.Infrastructure.Leaderboards;
 using Mehfil.Infrastructure.Moderation;
+using Mehfil.Infrastructure.Notifications;
 using Mehfil.Infrastructure.Rooms;
 using Mehfil.Infrastructure.Royalty;
 using Mehfil.Infrastructure.Storage;
@@ -48,6 +50,7 @@ public static class DependencyInjection
         services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.SectionName));
         services.AddOptions<AgoraOptions>().Bind(configuration.GetSection(AgoraOptions.SectionName));
         services.AddOptions<PurchasesOptions>().Bind(configuration.GetSection(PurchasesOptions.SectionName));
+        services.AddOptions<FirebaseOptions>().Bind(configuration.GetSection(FirebaseOptions.SectionName));
 
         services.AddSingleton<IClock, SystemClock>();
         services.AddMemoryCache();
@@ -84,6 +87,10 @@ public static class DependencyInjection
         services.AddSingleton<LeaderboardVersion>();
         services.AddScoped<ILeaderboardService, LeaderboardService>();
         services.AddScoped<IStoreService, StoreService>();
+        services.AddSingleton<IPushSender, FirebasePushSender>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IBlockService, BlockService>();
+        services.AddScoped<IAccountService, AccountService>();
         if (configuration.GetValue<bool>($"{PurchasesOptions.SectionName}:SandboxMode"))
         {
             services.AddSingleton<IStoreReceiptVerifier, SandboxReceiptVerifier>();

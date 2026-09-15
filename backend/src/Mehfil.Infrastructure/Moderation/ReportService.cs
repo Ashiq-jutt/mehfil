@@ -47,6 +47,95 @@ public sealed class ReportService(MehfilDbContext db, IClock clock, ILogger<Repo
         return new ReportDto(report.Id, report.TargetType, targetPublicId, report.Reason, report.Status, report.CreatedAt);
     }
 
+    public async Task<PagedResult<AdminReportDto>> ListForAdminAsync(ReportStatus? status, int? page, int? pageSize, CancellationToken ct)
+    {
+        var p = Math.Max(1, page ?? 1);
+        var size = Math.Clamp(pageSize ?? 20, 1, 100);
+        var query = db.Reports.AsNoTracking();
+        if (status is not null)
+        {
+            query = query.Where(r => r.Status == status);
+        }
+
+        var total = await query.LongCountAsync(ct);
+        var rows = await query.OrderBy(r => r.Status).ThenByDescending(r => r.Id).Skip((p - 1) * size).Take(size).Include(r => r.Reporter).ToListAsync(ct);
+        var items = new List<AdminReportDto>(rows.Count);
+        foreach (var row in rows)
+        {
+            items.Add(await ToAdminDtoAsync(row, ct));
+        }
+
+        return new PagedResult<AdminReportDto>(items, p, size, total);
+    }
+
+    public async Task<AdminReportDto> ResolveAsync(long adminId, long reportId, ResolveReportRequest request, CancellationToken ct)
+    {
+        if (request.Status == ReportStatus.Open)
+        {
+            throw new BadRequestException("reports.invalid_status", "Choose Reviewed, ActionTaken or Dismissed.");
+        }
+
+        if (request.Action is not null && !ReportActions.All.Contains(request.Action))
+        {
+            throw new BadRequestException("reports.invalid_action", $"Action must be one of: {string.Join(", ", ReportActions.All)}.");
+        }
+
+        var report = await db.Reports.Include(r => r.Reporter).FirstOrDefaultAsync(r => r.Id == reportId, ct) ?? throw NotFoundException.For("Report", reportId);
+        if (request.Action is not null)
+        {
+            await ApplyActionAsync(report, request.Action, ct);
+        }
+
+        report.Status = request.Action is not null ? ReportStatus.ActionTaken : request.Status;
+        report.ResolvedAt = clock.UtcNow;
+        report.ResolvedByUserId = adminId;
+        await db.SaveChangesAsync(ct);
+        logger.LogInformation("Admin {AdminId} resolved report {ReportId} as {Status} ({Action})", adminId, reportId, report.Status, request.Action ?? "none");
+        return await ToAdminDtoAsync(report, ct);
+    }
+
+    private async Task ApplyActionAsync(Report report, string action, CancellationToken ct)
+    {
+        switch (action)
+        {
+            case ReportActions.SuspendUser or ReportActions.BanUser when report.TargetType == ReportTargetType.User:
+            {
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Id == report.TargetId, ct) ?? throw NotFoundException.For("User", report.TargetId);
+                user.Status = action == ReportActions.BanUser ? UserStatus.Banned : UserStatus.Suspended;
+                await db.RefreshTokens.Where(t => t.UserId == user.Id && t.RevokedAt == null).ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, clock.UtcNow), ct);
+                break;
+            }
+            case ReportActions.DeactivateClub when report.TargetType == ReportTargetType.Club:
+            {
+                var club = await db.Clubs.FirstOrDefaultAsync(c => c.Id == report.TargetId, ct) ?? throw NotFoundException.For("Club", report.TargetId);
+                club.IsActive = false;
+                break;
+            }
+            case ReportActions.DeleteMessage when report.TargetType == ReportTargetType.Message:
+            {
+                var message = await db.ClubMessages.FirstOrDefaultAsync(m => m.Id == report.TargetId, ct) ?? throw NotFoundException.For("Message", report.TargetId);
+                message.IsDeleted = true;
+                break;
+            }
+            default:
+                throw new BadRequestException("reports.action_mismatch", $"Action '{action}' does not apply to a {report.TargetType} report.");
+        }
+    }
+
+    private async Task<AdminReportDto> ToAdminDtoAsync(Report report, CancellationToken ct)
+    {
+        var (publicId, name) = report.TargetType switch
+        {
+            ReportTargetType.User => await db.Users.AsNoTracking().Where(u => u.Id == report.TargetId).Select(u => new ValueTuple<string, string>(u.PublicId, u.DisplayName)).FirstOrDefaultAsync(ct),
+            ReportTargetType.Club => await db.Clubs.AsNoTracking().Where(c => c.Id == report.TargetId).Select(c => new ValueTuple<string, string>(c.PublicId, c.Name)).FirstOrDefaultAsync(ct),
+            _ => await db.ClubMessages.AsNoTracking().Where(m => m.Id == report.TargetId).Select(m => new ValueTuple<string, string>(m.Id.ToString(), m.Text)).FirstOrDefaultAsync(ct),
+        };
+
+        return new AdminReportDto(
+            report.Id, report.TargetType, publicId ?? report.TargetId.ToString(), name ?? "(gone)", report.Reason, report.Details, report.Status,
+            report.Reporter.PublicId, report.Reporter.DisplayName, report.CreatedAt, report.ResolvedAt);
+    }
+
     private async Task<(long Id, string PublicId)> ResolveTargetAsync(ReportTargetType type, string targetId, long reporterId, CancellationToken ct)
     {
         var id = targetId.Trim();

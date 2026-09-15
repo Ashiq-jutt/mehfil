@@ -946,6 +946,9 @@ namespace Mehfil.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -998,6 +1001,18 @@ namespace Mehfil.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
+
+                    b.Property<bool>("PushFollows")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PushGifts")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PushRewards")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PushSystem")
+                        .HasColumnType("bit");
 
                     b.Property<byte>("Role")
                         .HasColumnType("tinyint");

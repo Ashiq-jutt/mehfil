@@ -1,4 +1,5 @@
 using Mehfil.Core.Common;
+using Mehfil.Core.Notifications;
 using Mehfil.Core.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +7,35 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mehfil.Api.Controllers;
 
 [Authorize]
-public sealed class UsersController(IUserService users) : ApiControllerBase
+public sealed class UsersController(IUserService users, INotificationService notifications, IAccountService account) : ApiControllerBase
 {
+    /// <summary>Register (or re-own) this device's FCM token for push notifications.</summary>
+    [HttpPut("me/device-token")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> RegisterDevice([FromBody] RegisterDeviceRequest request, CancellationToken ct)
+    {
+        await notifications.RegisterDeviceAsync(CurrentUserId, request, ct);
+        return NoContent();
+    }
+
+    /// <summary>Forget this device's FCM token (call before signing out).</summary>
+    [HttpPost("me/device-token/unregister")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UnregisterDevice([FromBody] UnregisterDeviceRequest request, CancellationToken ct)
+    {
+        await notifications.UnregisterDeviceAsync(CurrentUserId, request.Token, ct);
+        return NoContent();
+    }
+
+    /// <summary>Delete the account (soft delete: identity anonymised, sessions revoked, owned clubs deactivated).</summary>
+    [HttpDelete("me")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteMe(CancellationToken ct)
+    {
+        await account.DeleteAsync(CurrentUserId, ct);
+        return NoContent();
+    }
+
     /// <summary>The signed-in user's own account.</summary>
     [HttpGet("me")]
     [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]

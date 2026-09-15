@@ -2,13 +2,14 @@ using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
 using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
+using Mehfil.Core.Notifications;
 using Mehfil.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Mehfil.Infrastructure.Clubs;
 
-public sealed class ClubMembersService(MehfilDbContext db, IClock clock, ILogger<ClubMembersService> logger) : IClubMembersService
+public sealed class ClubMembersService(MehfilDbContext db, INotificationService notifications, IClock clock, ILogger<ClubMembersService> logger) : IClubMembersService
 {
     public const int MaxAdmins = 7;
 
@@ -81,6 +82,13 @@ public sealed class ClubMembersService(MehfilDbContext db, IClock clock, ILogger
 
         await db.SaveChangesAsync(ct);
         logger.LogInformation("User {ActorId} promoted {UserId} to admin of club {ClubId}", actorId, user.Id, club.PublicId);
+        await notifications.NotifyAsync(
+            user.Id,
+            NotificationType.AdminGranted,
+            $"You are now an admin of {club.Name}",
+            "You can manage seats, the announcement and members in the room.",
+            new Dictionary<string, string> { ["clubId"] = club.PublicId },
+            ct);
         return await BuildAdminsAsync(club.Id, null, ct);
     }
 

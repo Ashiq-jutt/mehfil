@@ -14,6 +14,8 @@ export type MainStackParamList = {
   Shop: undefined;
   Leaderboard: undefined;
   ClubStore: { kind?: StoreItemKind } | undefined;
+  Settings: undefined;
+  Notifications: undefined;
   CreateClub: { publicId?: string } | undefined;
 };
 

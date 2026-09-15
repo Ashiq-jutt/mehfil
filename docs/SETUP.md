@@ -68,6 +68,25 @@ for the account card and **Sign out**.
 npm run check     # typecheck + lint + jest
 ```
 
+## 5. Push notifications (optional)
+
+Notifications are always stored in the database and listed in the app. Delivering them as
+push messages needs a Firebase project (Cloud Messaging only — Mehfil uses no other Firebase
+service):
+
+1. Backend: create a service account in the Firebase console, download its JSON and point
+   `Firebase:CredentialsPath` at it (user-secrets or the `Firebase__CredentialsPath`
+   environment variable). Leave it empty to run without push.
+2. Android: put `google-services.json` in `android/app/`. The Google Services Gradle plugin is
+   applied only when that file exists.
+3. iOS: add `GoogleService-Info.plist` to the Xcode project (target *Mehfil*), enable the
+   *Push Notifications* capability and upload your APNs key in the Firebase console.
+   `FirebaseApp.configure()` runs only when the plist is bundled.
+4. App: set `PUSH_ENABLED=true` in `.env`. Both config files are git-ignored.
+
+Taps on a notification open the club room or leaderboard it refers to; foreground messages show
+as toasts and refresh the inbox.
+
 ## Renaming / identity
 
 App name **Mehfil**, Android `applicationId` / Kotlin package `com.jalopy.mehfil`,

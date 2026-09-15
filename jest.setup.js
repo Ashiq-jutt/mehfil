@@ -148,3 +148,19 @@ jest.mock('react-native-safe-area-context', () => {
     initialWindowMetrics: { insets: inset, frame: { x: 0, y: 0, width: 390, height: 844 } },
   };
 });
+
+jest.mock('@react-native-firebase/app', () => ({ __esModule: true, default: { app: () => ({}) } }));
+jest.mock('@react-native-firebase/messaging', () => {
+  const instance = {
+    requestPermission: jest.fn(async () => 1),
+    getToken: jest.fn(async () => 'test-fcm-token'),
+    deleteToken: jest.fn(async () => undefined),
+    onTokenRefresh: jest.fn(() => () => undefined),
+    onMessage: jest.fn(() => () => undefined),
+    onNotificationOpenedApp: jest.fn(() => () => undefined),
+    getInitialNotification: jest.fn(async () => null),
+  };
+  const messaging = () => instance;
+  messaging.AuthorizationStatus = { NOT_DETERMINED: -1, DENIED: 0, AUTHORIZED: 1, PROVISIONAL: 2 };
+  return { __esModule: true, default: messaging };
+});

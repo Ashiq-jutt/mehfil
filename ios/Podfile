@@ -8,6 +8,10 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
+# React Native Firebase (push notifications) must be built as static frameworks.
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
+
 
 target 'Mehfil' do
   config = use_native_modules!

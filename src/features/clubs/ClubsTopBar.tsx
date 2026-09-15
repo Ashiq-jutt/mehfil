@@ -5,17 +5,15 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, AvatarRing, HeartsPill, Icon, IconButton } from '../../components';
 import { useMe } from '../../hooks/useMe';
+import { useUnreadCount } from '../../hooks/useNotifications';
 import type { MainStackParamList } from '../../navigation/types';
 import { colors, moderateScale, spacing } from '../../theme';
 import { resolveAssetUrl } from '../../utils/assets';
 
-type Props = {
-  onPressAccount: () => void;
-};
-
-/** Avatar · hearts balance · Store · Leaderboard · account, mirroring the reference header. */
-export function ClubsTopBar({ onPressAccount }: Props) {
+/** Avatar · hearts balance · Store · Leaderboard · settings (with the unread notification badge), mirroring the reference header. */
+export function ClubsTopBar() {
   const { user } = useMe();
+  const unread = useUnreadCount();
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   return (
@@ -30,7 +28,14 @@ export function ClubsTopBar({ onPressAccount }: Props) {
 
       <TopAction icon="store" label="Store" onPress={() => navigation.navigate('ClubStore')} />
       <TopAction icon="trophy" label="Leaderboard" onPress={() => navigation.navigate('Leaderboard')} />
-      <IconButton icon="gear" accessibilityLabel="Account" onPress={onPressAccount} size={moderateScale(36)} />
+      <View>
+        <IconButton icon="gear" accessibilityLabel={unread > 0 ? `Settings, ${unread} unread notifications` : 'Settings'} onPress={() => navigation.navigate('Settings')} size={moderateScale(36)} />
+        {unread > 0 ? (
+          <View style={styles.badge} pointerEvents="none">
+            <AppText variant="tiny">{unread > 99 ? '99+' : unread}</AppText>
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -67,5 +72,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minWidth: moderateScale(52),
     gap: 2,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: moderateScale(18),
+    height: moderateScale(18),
+    borderRadius: moderateScale(9),
+    paddingHorizontal: 4,
+    backgroundColor: colors.danger,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.7)',
   },
 });

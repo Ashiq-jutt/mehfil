@@ -2,6 +2,7 @@ using Mehfil.Core.Clubs;
 using Mehfil.Core.Common;
 using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
+using Mehfil.Core.Notifications;
 using Mehfil.Core.Storage;
 using Mehfil.Infrastructure.Auth;
 using Mehfil.Infrastructure.Data;
@@ -15,6 +16,7 @@ public sealed class ClubService(
     MehfilDbContext db,
     IFileStorage files,
     IOptions<StorageOptions> storageOptions,
+    INotificationService notifications,
     IClock clock,
     ILogger<ClubService> logger) : IClubService
 {
@@ -268,6 +270,18 @@ public sealed class ClubService(
             db.ClubFollows.Add(new ClubFollow { ClubId = club.Id, UserId = userId, CreatedAt = clock.UtcNow });
             club.FollowerCount++;
             await db.SaveChangesAsync(ct);
+
+            if (club.OwnerId != userId)
+            {
+                var follower = await db.Users.AsNoTracking().Where(u => u.Id == userId).Select(u => new { u.PublicId, u.DisplayName }).FirstAsync(ct);
+                await notifications.NotifyAsync(
+                    club.OwnerId,
+                    NotificationType.ClubFollowed,
+                    $"{follower.DisplayName} followed {club.Name}",
+                    $"Your club now has {club.FollowerCount:N0} followers.",
+                    new Dictionary<string, string> { ["clubId"] = club.PublicId, ["userId"] = follower.PublicId },
+                    ct);
+            }
         }
 
         return new FollowResultDto(true, club.FollowerCount);

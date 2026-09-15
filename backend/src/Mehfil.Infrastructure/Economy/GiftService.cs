@@ -2,6 +2,8 @@ using Mehfil.Core.Common;
 using Mehfil.Core.Economy;
 using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
+using Mehfil.Core.Moderation;
+using Mehfil.Core.Notifications;
 using Mehfil.Core.Rooms;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Leaderboards;
@@ -17,6 +19,8 @@ public sealed class GiftService(
     RoomRegistry registry,
     IRoomNotifier notifier,
     LeaderboardVersion leaderboardVersion,
+    IBlockService blocks,
+    INotificationService notifications,
     IClock clock,
     ILogger<GiftService> logger) : IGiftService
 {
@@ -69,6 +73,11 @@ public sealed class GiftService(
             if (registry.GetUserRoom(receiver.Id) != club.Id)
             {
                 throw new BadRequestException("gifts.receiver_not_in_room", "That user is not in this room.");
+            }
+
+            if (await blocks.IsBlockedEitherWayAsync(senderId, receiver.Id, ct))
+            {
+                throw new ConflictException("gifts.blocked", "You cannot send gifts to this user.");
             }
         }
 
@@ -153,6 +162,16 @@ public sealed class GiftService(
 
             await notifier.MessageReceivedAsync(club.Id, new ClubMessageDto(message.Id, message.Type, message.Text, users[senderId], now, transaction.Id));
             await notifier.GiftReceivedAsync(club.Id, evt);
+            if (receiver is not null)
+            {
+                await notifications.NotifyAsync(
+                    receiver.Id,
+                    NotificationType.GiftReceived,
+                    $"{senderName} sent you {gift.Name} ×{request.Quantity}",
+                    $"You received {hearts:N0} hearts in {club.Name}.",
+                    new Dictionary<string, string> { ["clubId"] = club.PublicId, ["senderId"] = users[senderId].Id },
+                    ct);
+            }
             if (leveledUp)
             {
                 logger.LogInformation("Club {ClubId} reached level {Level}", club.PublicId, club.Level);

@@ -2,6 +2,7 @@ using Mehfil.Core.Common;
 using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
 using Mehfil.Core.Leaderboards;
+using Mehfil.Core.Notifications;
 using Mehfil.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,6 +18,7 @@ public sealed class LeaderboardService(
     MehfilDbContext db,
     IMemoryCache cache,
     LeaderboardVersion version,
+    INotificationService notifications,
     IClock clock,
     ILogger<LeaderboardService> logger) : ILeaderboardService
 {
@@ -147,9 +149,11 @@ public sealed class LeaderboardService(
                 .ToListAsync(ct);
 
             var now = clock.UtcNow;
+            var winners = new List<(long UserId, string Title, string Body, Dictionary<string, string> Data)>();
             var strategy = db.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
             {
+                winners.Clear();
                 await using var tx = await db.Database.BeginTransactionAsync(ct);
 
                 db.LeaderboardSnapshots.Add(new LeaderboardSnapshot
@@ -175,7 +179,11 @@ public sealed class LeaderboardService(
 
                     if (rank <= LeaderboardPeriods.RewardedRanks)
                     {
-                        await GrantAsync(board, period, rank, top[i].Id, rankRewards, now, ct);
+                        var winner = await GrantAsync(board, period, rank, top[i].Id, rankRewards, now, ct);
+                        if (winner is not null)
+                        {
+                            winners.Add(winner.Value);
+                        }
                     }
                 }
 
@@ -190,9 +198,15 @@ public sealed class LeaderboardService(
                     // Another instance froze this period first; its rows are the truth.
                     await tx.RollbackAsync(ct);
                     db.ChangeTracker.Clear();
+                    winners.Clear();
                     logger.LogInformation("Finalisation of {Board}/{Period} {Start} raced with another instance", board, period, periodStart);
                 }
             });
+
+            foreach (var (userId, title, body, data) in winners)
+            {
+                await notifications.NotifyAsync(userId, NotificationType.LeaderboardReward, title, body, data, ct);
+            }
         }
         finally
         {
@@ -200,16 +214,17 @@ public sealed class LeaderboardService(
         }
     }
 
-    /// <summary>Hands out the rank's store items, bumps achievement counters and queues a notification.</summary>
-    private async Task GrantAsync(LeaderboardBoard board, LeaderboardPeriod period, int rank, long subjectId, List<StoreItem> items, DateTimeOffset now, CancellationToken ct)
+    /// <summary>Hands out the rank's store items and bumps achievement counters. Returns the notification to send after commit.</summary>
+    private async Task<(long UserId, string Title, string Body, Dictionary<string, string> Data)?> GrantAsync(
+        LeaderboardBoard board, LeaderboardPeriod period, int rank, long subjectId, List<StoreItem> items, DateTimeOffset now, CancellationToken ct)
     {
-        long? notifyUserId;
+        long notifyUserId;
         if (board == LeaderboardBoard.TopClubs)
         {
             var club = await db.Clubs.FirstOrDefaultAsync(c => c.Id == subjectId, ct);
             if (club is null)
             {
-                return;
+                return null;
             }
 
             notifyUserId = club.OwnerId;
@@ -252,15 +267,11 @@ public sealed class LeaderboardService(
         };
         var periodName = period == LeaderboardPeriod.Daily ? "yesterday" : "last week";
         var won = items.Count == 0 ? "" : $" You won: {string.Join(", ", items.Select(i => i.Name))}.";
-        db.Notifications.Add(new Notification
-        {
-            UserId = notifyUserId.Value,
-            Type = NotificationType.LeaderboardReward,
-            Title = $"Rank #{rank} on {boardName}!",
-            Body = $"You finished #{rank} on the {boardName} leaderboard {periodName}.{won}",
-            DataJson = $"{{\"board\":\"{board}\",\"period\":\"{period}\",\"rank\":{rank}}}",
-            CreatedAt = now,
-        });
+        return (
+            notifyUserId,
+            $"Rank #{rank} on {boardName}!",
+            $"You finished #{rank} on the {boardName} leaderboard {periodName}.{won}",
+            new Dictionary<string, string> { ["board"] = board.ToString(), ["period"] = period.ToString(), ["rank"] = rank.ToString() });
     }
 
     private async Task BumpAchievementAsync(long userId, AchievementKind kind, DateTimeOffset now, CancellationToken ct)

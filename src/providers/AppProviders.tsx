@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ApiError } from '../api';
 import { ToastHost } from '../components/ui/ToastHost';
+import { initPush } from '../push/pushService';
 import { useAuthStore } from '../store/authStore';
 
 const queryClient = new QueryClient({
@@ -33,6 +34,9 @@ function SessionBootstrap({ children }: PropsWithChildren) {
   useEffect(() => {
     if (status === 'signedOut') {
       queryClient.clear();
+    }
+    if (status === 'signedIn') {
+      initPush(queryClient).catch(() => undefined);
     }
   }, [status]);
 

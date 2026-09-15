@@ -21,6 +21,8 @@ export const env = {
   agoraAppId: Config.AGORA_APP_ID ?? '',
   /** Shows the "Developer login" option on the login screen (debug builds only). */
   devLoginEnabled: __DEV__ && flag(Config.DEV_LOGIN_ENABLED),
+  /** Registers for FCM push. Requires the Firebase config files in the native projects. */
+  pushEnabled: flag(Config.PUSH_ENABLED),
 } as const;
 
 export type MissingConfigKey = 'GOOGLE_WEB_CLIENT_ID';

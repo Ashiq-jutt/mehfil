@@ -64,6 +64,7 @@ the iOS client ID).
 | `Agora:AppId` / `Agora:AppCertificate` | Agora project credentials for voice tokens. The certificate is **server-side only**; set it with user-secrets or `Agora__AppCertificate` |
 | `Agora:TokenMinutes` | RTC token lifetime (default 60) |
 | `Purchases:SandboxMode` | Accept hearts purchases without store verification (Development only; `true` in appsettings.Development.json) |
+| `Firebase:CredentialsPath` / `Firebase:CredentialsJson` | Firebase service-account for FCM push. **Server-side only**; leave empty to store notifications without pushing (fine for development) |
 
 Never commit real secrets. Locally use user-secrets:
 

@@ -195,6 +195,11 @@ public sealed class AuthService(
 
     private static void EnsureCanSignIn(User user)
     {
+        if (user.Status == UserStatus.Deleted)
+        {
+            throw new ForbiddenException("auth.account_deleted", "This account was deleted.");
+        }
+
         if (user.Status == UserStatus.Banned)
         {
             throw new ForbiddenException("auth.account_banned", "This account has been banned.");

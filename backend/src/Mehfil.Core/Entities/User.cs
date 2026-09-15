@@ -54,6 +54,13 @@ public class User : AuditableEntity
 
     public UserStatus Status { get; set; } = UserStatus.Active;
     public UserRole Role { get; set; } = UserRole.User;
+    public DateTimeOffset? DeletedAt { get; set; }
+
+    // Push notification preferences (Settings screen).
+    public bool PushGifts { get; set; } = true;
+    public bool PushFollows { get; set; } = true;
+    public bool PushRewards { get; set; } = true;
+    public bool PushSystem { get; set; } = true;
 
     /// <summary>Optimistic concurrency token (SQL Server rowversion).</summary>
     public byte[] RowVersion { get; set; } = [];

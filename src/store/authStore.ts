@@ -5,6 +5,7 @@ import { attachAuthBridge, authApi, toApiError } from '../api';
 import type { AuthResponse, UserDto } from '../api/types';
 import { getGoogleIdToken, signOutOfGoogle } from '../auth/googleSignIn';
 import { sessionStorage, StoredSession } from '../auth/sessionStorage';
+import { unregisterPush } from '../push/pushService';
 
 export type AuthStatus = 'restoring' | 'signedOut' | 'signedIn';
 
@@ -114,6 +115,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const { refreshToken } = get();
       set({ isBusy: true });
       try {
+        await unregisterPush().catch(() => undefined);
         if (refreshToken) {
           await authApi.logout(refreshToken).catch(() => undefined);
         }

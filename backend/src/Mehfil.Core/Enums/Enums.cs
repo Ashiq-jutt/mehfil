@@ -13,6 +13,7 @@ public enum UserStatus : byte
     Active = 0,
     Suspended = 1,
     Banned = 2,
+    Deleted = 3,
 }
 
 public enum UserRole : byte

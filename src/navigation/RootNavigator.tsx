@@ -13,7 +13,10 @@ import { ShopScreen } from '../features/economy/ShopScreen';
 import { LeaderboardScreen } from '../features/leaderboard/LeaderboardScreen';
 import { ClubStoreScreen } from '../features/store/ClubStoreScreen';
 import { ClubRoomScreen } from '../features/room/ClubRoomScreen';
+import { NotificationsScreen } from '../features/notifications/NotificationsScreen';
+import { SettingsScreen } from '../features/settings/SettingsScreen';
 import { useAuthStore } from '../store/authStore';
+import { flushPendingNavigation, navigationRef } from './navigationRef';
 import type { AuthStackParamList, MainStackParamList } from './types';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -53,6 +56,8 @@ function MainNavigator() {
       <MainStack.Screen name="Shop" component={ShopScreen} options={{ animation: 'slide_from_bottom' }} />
       <MainStack.Screen name="Leaderboard" component={LeaderboardScreen} options={{ animation: 'slide_from_bottom' }} />
       <MainStack.Screen name="ClubStore" component={ClubStoreScreen} options={{ animation: 'slide_from_bottom' }} />
+      <MainStack.Screen name="Settings" component={SettingsScreen} options={{ animation: 'slide_from_bottom' }} />
+      <MainStack.Screen name="Notifications" component={NotificationsScreen} options={{ animation: 'slide_from_right' }} />
       <MainStack.Screen name="CreateClub" component={CreateClubScreen} options={{ animation: 'slide_from_bottom' }} />
     </MainStack.Navigator>
   );
@@ -66,7 +71,7 @@ export function RootNavigator() {
   }
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer ref={navigationRef} theme={navigationTheme} onReady={flushPendingNavigation}>
       {status === 'signedIn' ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

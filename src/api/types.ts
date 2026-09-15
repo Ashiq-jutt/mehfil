@@ -582,3 +582,36 @@ export interface BuyResultDto {
   code: string;
   balance: number;
 }
+
+// ---- Notifications & moderation ------------------------------------------
+
+export type NotificationType = 'System' | 'ClubFollowed' | 'GiftReceived' | 'LeaderboardReward' | 'ClubInvite' | 'AdminGranted' | 'Kicked' | 'Banned';
+
+export interface NotificationDto {
+  id: number;
+  type: NotificationType;
+  title: string;
+  body: string;
+  dataJson?: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface NotificationListDto {
+  notifications: PagedResult<NotificationDto>;
+  unreadCount: number;
+}
+
+export interface NotificationSettingsDto {
+  pushGifts: boolean;
+  pushFollows: boolean;
+  pushRewards: boolean;
+  pushSystem: boolean;
+}
+
+export interface BlockedUserDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  blockedAt: string;
+}

@@ -1,16 +1,31 @@
 using FluentValidation;
 using Mehfil.Core.Moderation;
-using Mehfil.Infrastructure.Moderation;
+using Mehfil.Core.Notifications;
 
 namespace Mehfil.Api.Validators;
 
-public sealed class CreateReportRequestValidator : AbstractValidator<CreateReportRequest>
+public sealed class RegisterDeviceRequestValidator : AbstractValidator<RegisterDeviceRequest>
 {
-    public CreateReportRequestValidator()
+    public RegisterDeviceRequestValidator()
     {
-        RuleFor(x => x.TargetType).IsInEnum();
-        RuleFor(x => x.TargetId).NotEmpty().MaximumLength(32);
-        RuleFor(x => x.Reason).NotEmpty().Must(ReportReasons.IsValid).WithMessage("Choose one of the listed reasons.");
-        RuleFor(x => x.Details).MaximumLength(ReportService.DetailsMax);
+        RuleFor(x => x.Platform).IsInEnum();
+        RuleFor(x => x.Token).NotEmpty().MaximumLength(512);
+    }
+}
+
+public sealed class UnregisterDeviceRequestValidator : AbstractValidator<UnregisterDeviceRequest>
+{
+    public UnregisterDeviceRequestValidator()
+    {
+        RuleFor(x => x.Token).NotEmpty().MaximumLength(512);
+    }
+}
+
+public sealed class ResolveReportRequestValidator : AbstractValidator<ResolveReportRequest>
+{
+    public ResolveReportRequestValidator()
+    {
+        RuleFor(x => x.Status).IsInEnum();
+        RuleFor(x => x.Action).Must(a => a is null || ReportActions.All.Contains(a)).WithMessage($"Action must be one of: {string.Join(", ", ReportActions.All)}.");
     }
 }

@@ -4,7 +4,6 @@ import { View } from 'react-native';
 
 import { IconButton, LanternsHeader, PillTabs, Screen } from '../../components';
 import type { ClubsTabParamList } from '../../navigation/types';
-import { AccountSheet } from '../account/AccountSheet';
 import { ClubsTopBar } from './ClubsTopBar';
 import { EnterClubDialog } from './EnterClubDialog';
 import { styles } from './ClubsHomeScreen.styles';
@@ -20,7 +19,6 @@ const TAB_ITEMS = [
 
 /** Clubs Home: top bar, Explore / Hot / My pill tabs and the club grid (phase 4). */
 export function ClubsHomeScreen() {
-  const [accountVisible, setAccountVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
 
   const renderTabBar = useCallback(
@@ -47,7 +45,7 @@ export function ClubsHomeScreen() {
   return (
     <Screen>
       <LanternsHeader />
-      <ClubsTopBar onPressAccount={() => setAccountVisible(true)} />
+      <ClubsTopBar />
 
       <Tabs.Navigator
         tabBar={renderTabBar}
@@ -57,7 +55,6 @@ export function ClubsHomeScreen() {
         <Tabs.Screen name="My" component={MyTab} />
       </Tabs.Navigator>
 
-      <AccountSheet visible={accountVisible} onClose={() => setAccountVisible(false)} />
       <EnterClubDialog visible={searchVisible} onClose={() => setSearchVisible(false)} />
     </Screen>
   );

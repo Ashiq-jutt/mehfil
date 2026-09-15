@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { roomApi, toApiError } from '../../api';
 import { AppText, Button, ErrorState, LoadingState } from '../../components';
+import { useBlockedIds } from '../../hooks/useBlocks';
 import { useFollowClub } from '../../hooks/useClubs';
 import type { MainStackScreenProps } from '../../navigation/types';
 import { useAuthStore } from '../../store/authStore';
@@ -28,6 +29,12 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
   const { publicId } = route.params;
   const myId = useAuthStore(s => s.user?.id);
   const room = useRoomStore();
+  const blockedIds = useBlockedIds();
+  // Messages from people you blocked are hidden locally; the server refuses gifts between you.
+  const visibleFeed = useMemo(
+    () => (blockedIds.size === 0 ? room.feed : room.feed.filter(item => item.kind !== 'message' || !item.message.sender || !blockedIds.has(item.message.sender.id))),
+    [room.feed, blockedIds],
+  );
   const follow = useFollowClub();
 
   const [exitVisible, setExitVisible] = useState(false);
@@ -230,7 +237,7 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
                 ) : null}
 
                 <ChatFeed
-                  feed={room.feed}
+                  feed={visibleFeed}
                   loadingHistory={room.loadingHistory}
                   onLoadOlder={room.loadOlder}
                   onPressUser={onPressUser}

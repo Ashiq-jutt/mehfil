@@ -38,6 +38,10 @@ export const usersApi = {
     return data;
   },
 
+  async deleteMe(): Promise<void> {
+    await apiClient.delete('/users/me');
+  },
+
   async search(query: string, limit = 20): Promise<UserSearchResultDto[]> {
     const { data } = await apiClient.get<UserSearchResultDto[]>('/users/search', { params: { q: query, limit } });
     return data;

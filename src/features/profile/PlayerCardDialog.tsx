@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, AvatarRing, Button, DialogCard, ErrorState, LoadingState, SectionRibbon } from '../../components';
 import { RoyalBadge } from '../../components/badges/RoyalBadge';
+import { useBlockedIds, useBlockUser, useUnblockUser } from '../../hooks/useBlocks';
 import { useProfile } from '../../hooks/useProfile';
 import { usePublicProfile } from '../../hooks/useRoyalty';
 import { useAuthStore } from '../../store/authStore';
@@ -43,6 +44,9 @@ export function PlayerCardDialog({ visible, onClose, publicId }: Props) {
   const me = useProfile();
   const other = usePublicProfile(visible && publicId && !isMe ? publicId : null);
   const [report, setReport] = useState(false);
+  const blockedIds = useBlockedIds();
+  const block = useBlockUser();
+  const unblock = useUnblockUser();
 
   const model: CardModel | null = isMe
     ? me.data
@@ -63,7 +67,16 @@ export function PlayerCardDialog({ visible, onClose, publicId }: Props) {
     <DialogCard visible={visible} onClose={onClose}>
       {loading && !model ? <LoadingState /> : null}
       {error && !model ? <ErrorState title="Could not load player" message={String((error as Error).message)} /> : null}
-      {model ? <CardBody model={model} isMe={isMe} onReport={() => setReport(true)} /> : null}
+      {model ? (
+        <CardBody
+          model={model}
+          isMe={isMe}
+          isBlocked={blockedIds.has(model.id)}
+          blockBusy={block.isPending || unblock.isPending}
+          onReport={() => setReport(true)}
+          onToggleBlock={() => (blockedIds.has(model.id) ? unblock.mutate(model.id) : block.mutate(model.id))}
+        />
+      ) : null}
       {model && !isMe ? (
         <ReportDialog visible={report} onClose={() => setReport(false)} targetType="User" targetId={model.id} targetLabel={`User · ${model.displayName}`} />
       ) : null}
@@ -71,7 +84,21 @@ export function PlayerCardDialog({ visible, onClose, publicId }: Props) {
   );
 }
 
-function CardBody({ model, isMe, onReport }: { model: CardModel; isMe: boolean; onReport: () => void }) {
+function CardBody({
+  model,
+  isMe,
+  isBlocked,
+  blockBusy,
+  onReport,
+  onToggleBlock,
+}: {
+  model: CardModel;
+  isMe: boolean;
+  isBlocked: boolean;
+  blockBusy: boolean;
+  onReport: () => void;
+  onToggleBlock: () => void;
+}) {
   const royalty = model.primeLevel !== 'None' ? model.primeLevel : model.royalLevel !== 'None' ? model.royalLevel : null;
 
   return (
@@ -114,7 +141,12 @@ function CardBody({ model, isMe, onReport }: { model: CardModel; isMe: boolean; 
         <Field label="Top receiver" value={`${model.achievements.topReceiverTimes}×`} />
       </View>
 
-      {!isMe ? <Button label="Report user" variant="ghost" icon="alert" onPress={onReport} style={styles.report} /> : null}
+      {!isMe ? (
+        <View style={styles.moderation}>
+          <Button label="Report user" variant="ghost" icon="alert" onPress={onReport} style={styles.report} />
+          <Button label={isBlocked ? 'Unblock' : 'Block'} variant="ghost" icon="lock" loading={blockBusy} onPress={onToggleBlock} style={styles.report} />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -170,7 +202,12 @@ const styles = StyleSheet.create({
   ribbon: {
     marginVertical: spacing.sm,
   },
+  moderation: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
   report: {
+    flex: 1,
     marginTop: spacing.sm,
   },
 });
