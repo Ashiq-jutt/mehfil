@@ -7,6 +7,8 @@ export type AuthStackParamList = {
 export type MainStackParamList = {
   ClubsHome: undefined;
   Profile: undefined;
+  ClubInfo: { publicId: string };
+  CreateClub: { publicId?: string } | undefined;
 };
 
 export type ClubsTabParamList = {

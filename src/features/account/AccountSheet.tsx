@@ -35,7 +35,7 @@ export function AccountSheet({ visible, onClose }: Props) {
 
       <Button label="Sign out" variant="danger" icon="logout" loading={isBusy} onPress={signOut} />
       <AppText variant="tiny" color="textMuted" align="center" style={styles.footer}>
-        Mehfil · phase 3 build
+        Mehfil · phase 4 build
       </AppText>
     </DialogCard>
   );

@@ -114,6 +114,95 @@ export interface RoyaltyDto {
   benefits: string[];
 }
 
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+export type ClubFeed = 'Explore' | 'Hot';
+export type MyClubsFilter = 'Followed' | 'Recents';
+export type ClubRole = 'Member' | 'Admin' | 'Owner';
+
+export interface ClubCardDto {
+  id: string;
+  name: string;
+  coverUrl?: string | null;
+  countryCode?: string | null;
+  flagEmoji?: string | null;
+  categoryCode: string;
+  categoryName: string;
+  level: number;
+  onlineCount: number;
+  memberCount: number;
+  followerCount: number;
+  totalHearts: number;
+  isLive: boolean;
+  isFollowing: boolean;
+  isMine: boolean;
+}
+
+export interface ClubOwnerDto {
+  id: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  level: number;
+}
+
+export interface ClubDetailDto {
+  id: string;
+  name: string;
+  coverUrl?: string | null;
+  countryCode?: string | null;
+  countryName?: string | null;
+  flagEmoji?: string | null;
+  categoryId: number;
+  categoryCode: string;
+  categoryName: string;
+  language: string;
+  announcement?: string | null;
+  owner: ClubOwnerDto;
+  adminCount: number;
+  memberCount: number;
+  followerCount: number;
+  onlineCount: number;
+  level: number;
+  jarHearts: number;
+  jarTarget: number;
+  jarResetsAt: string;
+  jarsCollected: number;
+  jarsForNextLevel: number;
+  totalHearts: number;
+  weeklyTopClubCount: number;
+  activeSeconds: number;
+  isLive: boolean;
+  isFollowing: boolean;
+  myRole?: ClubRole | null;
+  createdAt: string;
+}
+
+export interface CreateClubRequest {
+  name: string;
+  categoryId: number;
+  countryCode?: string | null;
+  language?: string | null;
+  announcement?: string | null;
+}
+
+export interface UpdateClubRequest {
+  name?: string | null;
+  categoryId?: number | null;
+  countryCode?: string | null;
+  language?: string | null;
+  announcement?: string | null;
+}
+
+export interface FollowResultDto {
+  isFollowing: boolean;
+  followerCount: number;
+}
+
 export interface AuthResponse {
   accessToken: string;
   accessTokenExpiresAt: string;
