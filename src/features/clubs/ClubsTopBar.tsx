@@ -6,15 +6,12 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, AvatarRing, HeartsPill, Icon, IconButton } from '../../components';
 import { useMe } from '../../hooks/useMe';
 import type { MainStackParamList } from '../../navigation/types';
-import { toast } from '../../store/toastStore';
 import { colors, moderateScale, spacing } from '../../theme';
 import { resolveAssetUrl } from '../../utils/assets';
 
 type Props = {
   onPressAccount: () => void;
 };
-
-const comingSoon = (feature: string, phase: number) => toast.info(`${feature} arrives in phase ${phase}.`);
 
 /** Avatar · hearts balance · Store · Leaderboard · account, mirroring the reference header. */
 export function ClubsTopBar({ onPressAccount }: Props) {
@@ -31,7 +28,7 @@ export function ClubsTopBar({ onPressAccount }: Props) {
 
       <View style={styles.spacer} />
 
-      <TopAction icon="store" label="Store" onPress={() => comingSoon('Club Store', 10)} />
+      <TopAction icon="store" label="Store" onPress={() => navigation.navigate('ClubStore')} />
       <TopAction icon="trophy" label="Leaderboard" onPress={() => navigation.navigate('Leaderboard')} />
       <IconButton icon="gear" accessibilityLabel="Account" onPress={onPressAccount} size={moderateScale(36)} />
     </View>

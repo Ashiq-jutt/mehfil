@@ -174,7 +174,7 @@ export function ClubRoomScreen({ route, navigation }: MainStackScreenProps<'Club
 
   return (
     <View style={styles.root}>
-      <RoomBackdrop />
+      <RoomBackdrop backgroundCode={club?.backgroundCode} />
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
         {club ? (
           <RoomHeader

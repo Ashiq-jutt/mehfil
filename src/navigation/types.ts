@@ -1,5 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import type { StoreItemKind } from '../api/types';
+
 export type AuthStackParamList = {
   Login: undefined;
 };
@@ -11,6 +13,7 @@ export type MainStackParamList = {
   ClubRoom: { publicId: string };
   Shop: undefined;
   Leaderboard: undefined;
+  ClubStore: { kind?: StoreItemKind } | undefined;
   CreateClub: { publicId?: string } | undefined;
 };
 

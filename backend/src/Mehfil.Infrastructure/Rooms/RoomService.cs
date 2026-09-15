@@ -3,6 +3,7 @@ using Mehfil.Core.Entities;
 using Mehfil.Core.Enums;
 using Mehfil.Core.Rooms;
 using Mehfil.Infrastructure.Data;
+using Mehfil.Infrastructure.Store;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -152,6 +153,7 @@ public sealed class RoomService(
         var roles = await db.ClubMembers.AsNoTracking()
             .Where(m => m.ClubId == club.Id && senderIds.Contains(m.UserId))
             .ToDictionaryAsync(m => m.UserId, m => m.Role, ct);
+        var cosmetics = await db.LoadUserCosmeticsAsync(senderIds, ct);
 
         return rows
             .OrderBy(r => r.Id)
@@ -162,7 +164,8 @@ public sealed class RoomService(
                 r.Sender == null
                     ? null
                     : new RoomUserDto(r.Sender.PublicId, r.Sender.DisplayName, r.Sender.AvatarUrl, r.Sender.Level,
-                        roles.GetValueOrDefault(r.Sender.Id, ClubRole.Member), r.Sender.Gender, r.Sender.RoyalLevel, false, false),
+                        roles.GetValueOrDefault(r.Sender.Id, ClubRole.Member), r.Sender.Gender, r.Sender.RoyalLevel, false, false,
+                        cosmetics.GetValueOrDefault(r.Sender.Id)?.FrameCode, cosmetics.GetValueOrDefault(r.Sender.Id)?.BubbleCode),
                 r.CreatedAt,
                 r.GiftTransactionId))
             .ToList();
@@ -499,8 +502,10 @@ public sealed class RoomService(
         var owner = await db.Users.Where(u => u.Id == club.OwnerId).Select(u => u.PublicId).FirstAsync(ct);
         var recent = await GetMessagesAsync(club.PublicId, null, RecentMessages, ct);
 
+        var backgroundCode = await db.LoadItemCodeAsync(club.BackgroundItemId, ct);
         var roomClub = new RoomClubDto(club.PublicId, club.Name, club.CoverUrl, club.Level, club.Announcement, owner,
-            club.JarHearts, club.JarTarget, club.JarResetsAt, club.JarsCollected, club.JarsForNextLevel, club.TotalHearts, club.FollowerCount, isFollowing);
+            club.JarHearts, club.JarTarget, club.JarResetsAt, club.JarsCollected, club.JarsForNextLevel, club.TotalHearts, club.FollowerCount, isFollowing,
+            backgroundCode);
 
         return new RoomStateDto(roomClub, myRole, mySeat, registry.Count(club.Id), seatDtos, online, recent);
     }
@@ -520,11 +525,14 @@ public sealed class RoomService(
                 Role = db.ClubMembers.Where(m => m.ClubId == clubId && m.UserId == u.Id).Select(m => (ClubRole?)m.Role).FirstOrDefault(),
             })
             .ToListAsync(ct);
+        var cosmetics = await db.LoadUserCosmeticsAsync(userIds, ct);
 
         return rows.ToDictionary(r => r.Id, r =>
         {
             var (mic, speaking) = registry.GetState(r.Id);
-            return new RoomUserDto(r.PublicId, r.DisplayName, r.AvatarUrl, r.Level, r.Role ?? ClubRole.Member, r.Gender, r.RoyalLevel, mic, speaking);
+            var c = cosmetics.GetValueOrDefault(r.Id);
+            return new RoomUserDto(r.PublicId, r.DisplayName, r.AvatarUrl, r.Level, r.Role ?? ClubRole.Member, r.Gender, r.RoyalLevel, mic, speaking,
+                c?.FrameCode, c?.BubbleCode, c?.EntryStyleCode);
         });
     }
 

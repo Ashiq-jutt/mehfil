@@ -1,9 +1,11 @@
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { AppText, Button, DialogCard, Icon } from '../../../components';
-import { toast } from '../../../store/toastStore';
+import type { MainStackParamList } from '../../../navigation/types';
 import { colors, gradients, moderateScale, palette, radius, spacing } from '../../../theme';
 import { formatCountdown, formatNumber } from '../../../utils/format';
 import type { ClubLevelDto } from '../../../api/types';
@@ -12,6 +14,7 @@ type Props = { visible: boolean; onClose: () => void; level: ClubLevelDto };
 
 /** "CLUBS LEVELS": jar fill, daily reset countdown and jars-to-next-level progress. */
 export function ClubLevelsDialog({ visible, onClose, level }: Props) {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     if (!visible) {
@@ -76,7 +79,15 @@ export function ClubLevelsDialog({ visible, onClose, level }: Props) {
           </View>
           <LevelBadge level={level.level + 1} gold />
         </View>
-        <Button label="Rewards ≫" variant="ghost" onPress={() => toast.info('Level rewards arrive with the Club Store in phase 10.')} style={styles.rewards} />
+        <Button
+          label="Rewards ≫"
+          variant="ghost"
+          onPress={() => {
+            onClose();
+            navigation.navigate('ClubStore', { kind: 'Background' });
+          }}
+          style={styles.rewards}
+        />
       </View>
     </DialogCard>
   );

@@ -6,6 +6,7 @@ using Mehfil.Core.Rooms;
 using Mehfil.Infrastructure.Data;
 using Mehfil.Infrastructure.Leaderboards;
 using Mehfil.Infrastructure.Rooms;
+using Mehfil.Infrastructure.Store;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -187,10 +188,13 @@ public sealed class GiftService(
                 u.Id, u.PublicId, u.DisplayName, u.AvatarUrl, u.Level, u.Gender, u.RoyalLevel,
                 Role = db.ClubMembers.Where(m => m.ClubId == clubId && m.UserId == u.Id).Select(m => (ClubRole?)m.Role).FirstOrDefault(),
             }).ToListAsync(ct);
+        var cosmetics = await db.LoadUserCosmeticsAsync(ids, ct);
         return rows.ToDictionary(r => r.Id, r =>
         {
             var (mic, speaking) = registry.GetState(r.Id);
-            return new RoomUserDto(r.PublicId, r.DisplayName, r.AvatarUrl, r.Level, r.Role ?? ClubRole.Member, r.Gender, r.RoyalLevel, mic, speaking);
+            var c = cosmetics.GetValueOrDefault(r.Id);
+            return new RoomUserDto(r.PublicId, r.DisplayName, r.AvatarUrl, r.Level, r.Role ?? ClubRole.Member, r.Gender, r.RoyalLevel, mic, speaking,
+                c?.FrameCode, c?.BubbleCode, c?.EntryStyleCode);
         });
     }
 }

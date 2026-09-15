@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { AppText, AvatarRing, Icon } from '../../components';
 import { colors, gradients, moderateScale, spacing } from '../../theme';
 import { resolveAssetUrl } from '../../utils/assets';
+import { frameColors } from '../store/cosmetics';
 import type { SeatDto } from '../../api/types';
 
 type Props = {
@@ -36,8 +37,15 @@ const Seat = memo(function SeatItem({ seat, isMe, onPress }: { seat: SeatDto; is
   const speaking = !!user?.isSpeaking;
   const label = user ? user.displayName : seat.isLocked ? '' : String(seat.index);
 
+  const frame = user ? frameColors(user.frameCode) : null;
   const circle = user ? (
-    <AvatarRing uri={resolveAssetUrl(user.avatarUrl)} size={SEAT} ring="none" />
+    frame ? (
+      <LinearGradient colors={frame} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cosmeticFrame}>
+        <AvatarRing uri={resolveAssetUrl(user.avatarUrl)} size={SEAT - 6} ring="none" />
+      </LinearGradient>
+    ) : (
+      <AvatarRing uri={resolveAssetUrl(user.avatarUrl)} size={SEAT} ring="none" />
+    )
   ) : (
     <View style={[styles.empty, seat.isLocked ? styles.locked : null]}>
       <Icon name={seat.isLocked ? 'lock' : 'mic'} size={moderateScale(18)} color="rgba(255,255,255,0.7)" />
@@ -117,6 +125,13 @@ const styles = StyleSheet.create({
     width: SEAT + 6,
     height: SEAT + 6,
     borderRadius: (SEAT + 6) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cosmeticFrame: {
+    width: SEAT,
+    height: SEAT,
+    borderRadius: SEAT / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },

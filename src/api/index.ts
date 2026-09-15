@@ -10,4 +10,5 @@ export { reportsApi } from './reports';
 export { roomApi } from './room';
 export { walletApi, giftsApi } from './economy';
 export { leaderboardApi } from './leaderboard';
+export { storeApi } from './store';
 export type * from './types';

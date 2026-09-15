@@ -12,7 +12,7 @@ export const walletKey = ['wallet'] as const;
 export const shopKey = ['wallet', 'shop'] as const;
 
 /** Keeps the cached session user's balance in sync with wallet responses. */
-function useSyncBalance() {
+export function useSyncBalance() {
   const queryClient = useQueryClient();
   const setUser = useAuthStore(s => s.setUser);
   return (balance: number) => {

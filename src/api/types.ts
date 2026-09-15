@@ -267,6 +267,10 @@ export interface RoomUserDto {
   royalLevel: RoyalLevel;
   micEnabled: boolean;
   isSpeaking: boolean;
+  /** Equipped Club Store cosmetics (null = default). */
+  frameCode?: string | null;
+  bubbleCode?: string | null;
+  entryStyleCode?: string | null;
 }
 
 export interface SeatDto {
@@ -301,6 +305,8 @@ export interface RoomClubDto {
   totalHearts: number;
   followerCount: number;
   isFollowing: boolean;
+  /** Equipped room background from the Club Store (null = default scene). */
+  backgroundCode?: string | null;
 }
 
 export interface RoomStateDto {
@@ -331,7 +337,7 @@ export interface VoiceTokenDto {
   canPublish: boolean;
 }
 
-export type LedgerReason = 'Purchase' | 'GiftSent' | 'Reward' | 'AdminAdjustment' | 'WelcomeBonus' | 'Refund';
+export type LedgerReason = 'Purchase' | 'GiftSent' | 'Reward' | 'AdminAdjustment' | 'WelcomeBonus' | 'Refund' | 'StorePurchase';
 export type PurchaseStatus = 'Pending' | 'Verified' | 'Rejected' | 'Refunded';
 export type DevicePlatform = 'Android' | 'Ios';
 
@@ -524,4 +530,55 @@ export interface BoardRewardsDto {
 
 export interface LeaderboardRewardsDto {
   boards: BoardRewardsDto[];
+}
+
+// ---- Club Store -----------------------------------------------------------
+
+export type UnlockRule = 'Default' | 'Leaderboard' | 'RoyalLevel' | 'PrimeLevel' | 'ClubLevel' | 'Purchase';
+
+export interface StoreItemDto {
+  code: string;
+  kind: StoreItemKind;
+  name: string;
+  assetUrl: string;
+  previewUrl?: string | null;
+  unlockRule: UnlockRule;
+  unlockValue: number;
+  unlockBoard?: LeaderboardBoard | null;
+  unlockLabel?: string | null;
+  heartsPrice?: number | null;
+  /** Usable by me (won, reached the tier/level, bought, or a default). */
+  isOwned: boolean;
+  isEquipped: boolean;
+  /** Not owned and not purchasable with hearts. */
+  isLocked: boolean;
+  lockReason?: string | null;
+  isNew: boolean;
+}
+
+export interface StoreKindDto {
+  kind: StoreItemKind;
+  count: number;
+  newCount: number;
+}
+
+export interface StoreDto {
+  balance: number;
+  clubId?: string | null;
+  clubName?: string | null;
+  clubLevel: number;
+  highestRoyalLevel: RoyalLevel;
+  primeLevel: PrimeLevel;
+  kinds: StoreKindDto[];
+  items: StoreItemDto[];
+}
+
+export interface EquipResultDto {
+  kind: StoreItemKind;
+  equippedCode?: string | null;
+}
+
+export interface BuyResultDto {
+  code: string;
+  balance: number;
 }

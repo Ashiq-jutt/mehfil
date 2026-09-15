@@ -79,6 +79,7 @@ public enum LedgerReason : byte
     AdminAdjustment = 3,
     WelcomeBonus = 4,
     Refund = 5,
+    StorePurchase = 6,
 }
 
 public enum StoreItemKind : byte

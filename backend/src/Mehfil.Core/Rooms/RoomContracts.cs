@@ -11,7 +11,11 @@ public sealed record RoomUserDto(
     Gender Gender,
     RoyalLevel RoyalLevel,
     bool MicEnabled,
-    bool IsSpeaking);
+    bool IsSpeaking,
+    /// <summary>Equipped Club Store cosmetics (null = default).</summary>
+    string? FrameCode = null,
+    string? BubbleCode = null,
+    string? EntryStyleCode = null);
 
 public sealed record SeatDto(int Index, bool IsLocked, bool IsMuted, bool IsOwnerSeat, RoomUserDto? User);
 
@@ -31,7 +35,9 @@ public sealed record RoomClubDto(
     int JarsForNextLevel,
     long TotalHearts,
     int FollowerCount,
-    bool IsFollowing);
+    bool IsFollowing,
+    /// <summary>Equipped room background from the Club Store (null = default scene).</summary>
+    string? BackgroundCode = null);
 
 /// <summary>Everything the room screen needs on entry (and after a reconnect).</summary>
 public sealed record RoomStateDto(

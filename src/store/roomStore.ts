@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 import { roomApi, toApiError } from '../api';
 import type { ClubMessageDto, ClubRole, GiftEventDto, RoomClubDto, RoomStateDto, RoomUserDto, SeatDto } from '../api/types';
+import { entryStyle } from '../features/store/cosmetics';
 import { ensureConnected, getRoomConnection, parseHubError } from '../realtime/roomConnection';
 import { agoraVoice, VoiceStatus } from '../voice/agoraVoice';
 import { useAuthStore } from './authStore';
@@ -96,7 +97,8 @@ export const useRoomStore = create<RoomState>((set, get) => {
     hub.on('UserJoined', (user: RoomUserDto, onlineCount: number) => {
       set(state => ({ users: { ...state.users, [user.id]: user }, onlineCount }));
       if (user.id !== myId()) {
-        appendFeed(systemItem(`${user.displayName} entered the room`));
+        const arrival = entryStyle(user.entryStyleCode);
+        appendFeed(systemItem(arrival ? `${user.displayName} arrived by ${arrival.label} ${arrival.emoji}` : `${user.displayName} entered the room`));
       }
     });
 

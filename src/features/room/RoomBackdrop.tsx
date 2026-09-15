@@ -3,21 +3,25 @@ import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 
 import { palette } from '../../theme';
+import { backgroundTheme } from '../store/cosmetics';
 
-/** Original decorative backdrop for the room: night skyline, glowing pedestal and a trophy silhouette. */
-export function RoomBackdrop() {
+type Props = { backgroundCode?: string | null };
+
+/** Original decorative backdrop for the room: skyline, glowing pedestal and a trophy, themed by the club's equipped background. */
+export function RoomBackdrop({ backgroundCode }: Props) {
+  const theme = backgroundTheme(backgroundCode);
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       <Svg width="100%" height="100%" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice">
         <Defs>
           <LinearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor={palette.violet950} />
-            <Stop offset="0.55" stopColor={palette.violet900} />
-            <Stop offset="1" stopColor={palette.plum900} />
+            <Stop offset="0" stopColor={theme.sky[0]} />
+            <Stop offset="0.55" stopColor={theme.sky[1]} />
+            <Stop offset="1" stopColor={theme.sky[2]} />
           </LinearGradient>
           <LinearGradient id="trophy" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor="#C98A3A" />
-            <Stop offset="1" stopColor="#6B3F14" />
+            <Stop offset="0" stopColor={theme.trophy[0]} />
+            <Stop offset="1" stopColor={theme.trophy[1]} />
           </LinearGradient>
           <LinearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
             <Stop offset="0" stopColor={palette.violet400} stopOpacity="0.35" />
@@ -46,8 +50,8 @@ export function RoomBackdrop() {
         {/* pedestal glow + base */}
         <Ellipse cx="195" cy="690" rx="150" ry="60" fill="url(#glow)" />
         <Ellipse cx="195" cy="700" rx="95" ry="22" fill={palette.plum800} />
-        <Ellipse cx="195" cy="694" rx="80" ry="16" fill="#3E7A3A" opacity={0.9} />
-        <Ellipse cx="195" cy="690" rx="62" ry="11" fill="#5FA657" opacity={0.9} />
+        <Ellipse cx="195" cy="694" rx="80" ry="16" fill={theme.ground[0]} opacity={0.9} />
+        <Ellipse cx="195" cy="690" rx="62" ry="11" fill={theme.ground[1]} opacity={0.9} />
 
         {/* trophy */}
         <Rect x="170" y="655" width="50" height="14" rx="4" fill="url(#trophy)" />

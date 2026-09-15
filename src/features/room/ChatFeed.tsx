@@ -5,6 +5,7 @@ import { AppText, AvatarRing } from '../../components';
 import type { FeedItem } from '../../store/roomStore';
 import { colors, moderateScale, radius, spacing } from '../../theme';
 import { resolveAssetUrl } from '../../utils/assets';
+import { bubbleTheme } from '../store/cosmetics';
 import type { RoomUserDto } from '../../api/types';
 
 type Props = {
@@ -68,6 +69,7 @@ const MessageRow = memo(function MessageRowItem({
   onLongPress?: (item: Extract<FeedItem, { kind: 'message' }>) => void;
 }) {
   const sender = item.message.sender;
+  const bubble = bubbleTheme(sender?.bubbleCode);
   return (
     <Pressable onLongPress={onLongPress ? () => onLongPress(item) : undefined} delayLongPress={400} style={styles.messageRow}>
       <Pressable accessibilityRole="button" disabled={!sender} onPress={() => sender && onPressUser(sender)}>
@@ -78,7 +80,7 @@ const MessageRow = memo(function MessageRowItem({
           {sender?.displayName ?? 'System'}
           {sender?.role === 'Owner' ? '  👑' : sender?.role === 'Admin' ? '  ★' : ''}
         </AppText>
-        <View style={styles.bubble}>
+        <View style={[styles.bubble, bubble ? { backgroundColor: bubble.backgroundColor, borderColor: bubble.borderColor } : null]}>
           <AppText variant="body">{item.message.text}</AppText>
         </View>
       </View>
