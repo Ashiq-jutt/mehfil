@@ -49,7 +49,7 @@ cd frontend && npm run check   # typecheck + lint + jest
 cd backend && dotnet test
 ```
 
-Both run on every push and pull request to `main` and `dev`
+Both run on every push and pull request to `main`
 ([.github/workflows/ci.yml](.github/workflows/ci.yml)). The workflow also fails if the EF Core
 model has drifted from the migrations. Integration tests need SQL Server and skip themselves
 unless `MEHFIL_TEST_CONNECTION_STRING` is set.

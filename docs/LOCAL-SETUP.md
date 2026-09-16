@@ -185,7 +185,7 @@ cd frontend && npm run check      # typecheck, lint, tests
 cd backend && dotnet test         # unit tests
 ```
 
-The same checks run in GitHub Actions on every push to `main` and `dev`
+The same checks run in GitHub Actions on every push to `main` and on every pull request into it
 (`.github/workflows/ci.yml`), which also fails if the EF Core model has drifted from the
 committed migrations.
 
