@@ -4,5 +4,5 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!(@react-native|react-native|react-native-.*|@react-navigation|@react-native-google-signin)/)',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/', '/backend/'],
+  testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/'],
 };

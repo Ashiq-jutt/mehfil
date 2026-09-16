@@ -4,7 +4,7 @@ Status: **Approved 2026-09-15 with the §7 defaults** (SQL Server, .NET 10, Hear
 Branch: `dev` (all work is developed and pushed here).
 
 Progress: Phase 1 (backend skeleton) delivered in `backend/` — see `backend/README.md`.
-Phase 2 (app foundation: Firebase removed, Mehfil identity, theme, navigation, auth flow) delivered — see `docs/SETUP.md`.
+Phase 2 (app foundation: Firebase removed, Mehfil identity, theme, navigation, auth flow) delivered — see `docs/LOCAL-SETUP.md`.
 Phase 3 (Profile + Royalty: profile screen, gender-once, birthday, avatar upload, player card, royalty tiers, countries catalog) delivered.
 Phase 4 (Clubs Home: Explore/Hot/My feeds, country filter, Enter-a-Club lookup, create/edit club, cover upload, follow, Club Info basics) delivered.
 Phase 5 (Club Info completion: admin list with 7-admin cap and owner add/remove, user search, INFO/RULES dialog, report user/club) delivered.
@@ -13,7 +13,7 @@ Phase 7 (Agora voice: server-side AccessToken2 tokens, listener/publisher roles 
 Phase 8 (Hearts economy: wallet ledger, Shop with welcome offer and sandbox purchase verification, gifts in rooms with atomic debit, club jar and levels, realtime gift events) delivered — react-native-iap store wiring is a follow-up once store products exist.
 Phase 9 (Leaderboards: Top Clubs weekly, Top Gifters / Top Receivers daily and weekly, live rankings from gift transactions, lazy period freeze into snapshots with store-item rewards, achievements and reward notifications, podium + Results + Rewards modal + my-rank row in the app) delivered — the room's "Activity" rail stays a placeholder.
 Phase 10 (Club Store: items with unlock rules (default / leaderboard win / royal / prime / club level / hearts purchase), equip per kind for users and for the owner's club, hearts purchases with ledger rows, equipped frames, chat bubbles, entry styles and room backgrounds rendered in rooms; store screen with kind tabs, NEW badges, grid states and preview carousel) delivered — item artwork is generated from theme tokens until real assets are added under `/assets/store`.
-Phase 11 (Notifications + moderation + settings: notification rows for gifts, follows, admin grants and leaderboard wins with FCM push through FirebaseAdmin gated by per-user settings, device token registration, notification inbox with deep links, blocks that hide chat and refuse gifts, admin/moderator report queue with suspend/ban/deactivate/delete actions, settings screen with push toggles, blocked users, sign-out and account deletion) delivered — push needs the Firebase config files described in `docs/SETUP.md`.
+Phase 11 (Notifications + moderation + settings: notification rows for gifts, follows, admin grants and leaderboard wins with FCM push through FirebaseAdmin gated by per-user settings, device token registration, notification inbox with deep links, blocks that hide chat and refuse gifts, admin/moderator report queue with suspend/ban/deactivate/delete actions, settings screen with push toggles, blocked users, sign-out and account deletion) delivered — push needs the Firebase config files described in `docs/LOCAL-SETUP.md`.
 Phase 12 (Polish: loading skeletons for the club grid, leaderboard, store and inbox; entry-style arrival and club level-up animations; a real room Activity panel; seed-integrity and activity/skeleton tests; GitHub Actions CI for both halves with an EF model-drift check; docs refresh) delivered — the plan is complete.
 
 **Remaining follow-ups** (outside the 12 phases): real store purchases via `react-native-iap` once the products exist, Club Store artwork under `/assets/store` (the seed already points at the file names), and the Firebase config files for push.
@@ -227,6 +227,9 @@ Remove: `@react-native-firebase/{auth,firestore,functions,storage,app-check}`, t
 emulator scripts; trim `firebase.json` to messaging only.
 
 ### 4.3 Structure
+
+The app lives in `frontend/` alongside `backend/` (it sat at the repository root until the
+folders were split; paths below are relative to `frontend/`).
 
 ```
 src/

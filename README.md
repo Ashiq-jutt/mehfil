@@ -6,7 +6,8 @@ leaderboards and a cosmetics store.
 | Part | Stack | Docs |
 |---|---|---|
 | `backend/` | ASP.NET Core 10 (MVC controllers), EF Core **Code First** + auto-migrate, SQL Server, SignalR, JWT | [backend/README.md](backend/README.md) |
-| app (this folder) | React Native 0.87 (bare CLI), TypeScript, React Navigation, Zustand, TanStack Query | [docs/SETUP.md](docs/SETUP.md) |
+| `frontend/` | React Native 0.87 (bare CLI), TypeScript, React Navigation, Zustand, TanStack Query | [frontend/README.md](frontend/README.md) |
+| setup | Step-by-step guide to running both locally | [docs/LOCAL-SETUP.md](docs/LOCAL-SETUP.md) |
 | plan | Screen inventory from `video/`, data model, API surface, phased delivery | [docs/PLAN.md](docs/PLAN.md) |
 
 ## Features
@@ -24,10 +25,11 @@ leaderboards and a cosmetics store.
 ## Quick start
 
 ```sh
-# 1. backend (creates + migrates + seeds the database, Swagger on http://localhost:5080/swagger)
+# 1. backend — creates, migrates and seeds the database; Swagger on http://localhost:5080/swagger
 cd backend && dotnet run --project src/Mehfil.Api
 
-# 2. app
+# 2. app — in a second terminal
+cd frontend
 cp .env.example .env
 npm install
 npm start
@@ -36,13 +38,14 @@ npm run android   # or: npm run ios (after: bundle install && npm run pods)
 
 Sign in with **Developer login** on the login screen (debug builds, no Google setup needed).
 
-Optional: push notifications and real store purchases need extra setup — see
-[docs/SETUP.md](docs/SETUP.md).
+The full walkthrough, including Docker, physical devices and troubleshooting, is in
+[docs/LOCAL-SETUP.md](docs/LOCAL-SETUP.md). Voice, Google Sign-In and push notifications are
+optional and documented there too.
 
 ## Checks
 
 ```sh
-npm run check            # typecheck + lint + jest
+cd frontend && npm run check   # typecheck + lint + jest
 cd backend && dotnet test
 ```
 
@@ -54,20 +57,9 @@ unless `MEHFIL_TEST_CONNECTION_STRING` is set.
 ## Layout
 
 ```
-src/
-  api/          axios client (JWT refresh), endpoint modules, DTO types
-  auth/         keychain session storage, Google Sign-In wrapper
-  store/        zustand stores (auth, room, toasts, filters)
-  realtime/     SignalR club-hub connection
-  voice/        Agora engine wrapper and speaking detection
-  push/         FCM registration and notification routing
-  iap/          store purchase adapter (sandbox today)
-  navigation/   root / main / tab navigators (typed params), notification deep links
-  theme/        palette, semantic colours, gradients, typography, metrics
-  components/   ui kit (buttons, panels, pill tabs, chips, dialogs, skeletons …), icons, badges, decor
-  hooks/        TanStack Query hooks per domain
-  features/     auth, clubs, room, economy, leaderboard, store, notifications, settings, profile
-  assets/fonts  Fredoka (display) and Nunito (body), linked via react-native-asset
-backend/        Mehfil.sln (Core · Infrastructure · Api · Tests)
-video/          reference recordings the design follows
+backend/     Mehfil.sln — Core · Infrastructure · Api · Tests   (see backend/README.md)
+frontend/    React Native app — src/, android/, ios/            (see frontend/README.md)
+docs/        LOCAL-SETUP.md (how to run it) · PLAN.md (design and delivery plan)
+video/       reference recordings the design follows
+.github/     CI workflow for both halves
 ```
