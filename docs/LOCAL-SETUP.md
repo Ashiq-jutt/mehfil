@@ -198,6 +198,78 @@ cd backend && dotnet test
 
 ---
 
+## Step 8 — Look inside the database
+
+The API creates and fills the database for you, but it helps to see what landed there.
+
+| Field | Value |
+|---|---|
+| Host | `localhost` |
+| Port | `1433` |
+| User | `sa` |
+| Password | `Mehfil_Dev_Pa55word!` (the compose default; override with `MSSQL_SA_PASSWORD`) |
+| Database | `Mehfil` |
+| Encryption | trust the server certificate |
+
+### With a GUI
+
+The least setup is the **SQL Server (mssql)** extension for VS Code. Install it, add a connection
+with the values above, and browse the tables. **TablePlus** and **DBeaver** work too.
+
+### From the terminal
+
+No install needed, the client ships inside the container. Confirm the container name first,
+because Compose derives it from the folder name:
+
+```sh
+cd backend
+docker compose ps        # expect backend-sqlserver-1
+```
+
+Then define a shortcut. Run this line **on its own**, because zsh parses a whole paste at once
+and an alias only applies to input parsed after it:
+
+```sh
+alias mdb='docker exec -i backend-sqlserver-1 /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "Mehfil_Dev_Pa55word!" -d Mehfil -W -s"|" -Q'
+```
+
+Now each query is one line:
+
+```sh
+mdb "SELECT name FROM sys.tables ORDER BY name"
+mdb "SELECT Id, PublicId, DisplayName, Email, HeartsBalance, Status FROM Users"
+mdb "SELECT Id, PublicId, Name, Level, JarHearts, TotalHearts, MemberCount FROM Clubs"
+mdb "SELECT TOP 20 * FROM GiftTransactions ORDER BY Id DESC"
+mdb "SELECT TOP 20 * FROM WalletLedger ORDER BY Id DESC"
+mdb "SELECT * FROM __EFMigrationsHistory"
+
+# columns of any table
+mdb "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='Users' ORDER BY ORDINAL_POSITION"
+
+# every table with its row count
+mdb "SELECT t.name AS TableName, SUM(p.rows) AS Rows FROM sys.tables t JOIN sys.partitions p ON p.object_id = t.object_id AND p.index_id IN (0,1) GROUP BY t.name ORDER BY t.name"
+```
+
+Add the alias to `~/.zshrc` to keep it. Dropping the `-Q "..."` opens an interactive prompt
+instead, where nothing runs until you type `GO` on a line of its own.
+
+### What is in there
+
+`Countries`, `ClubCategories`, `Gifts`, `HeartsPackages` and `StoreItems` are seeded and
+re-upserted on every API start, so edits to them are overwritten. Everything else is live data.
+No user rows are seeded: every row in `Users` came from a sign-in, so a Developer login with a
+new email creates a new account.
+
+To wipe everything and start over:
+
+```sh
+cd backend
+docker compose down -v      # -v also deletes the database volume
+docker compose up --build
+```
+
+---
+
 ## Optional — voice, Google Sign-In, push
 
 Skip these until you need them. Everything above works without them.
