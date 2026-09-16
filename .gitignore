@@ -1,4 +1,6 @@
-# Repository-wide ignores. The app has frontend/.gitignore and the API has backend/.gitignore.
+# Repository-wide ignores.
+# The app has frontend/.gitignore and the API has backend/.gitignore; the patterns here are a
+# safety net so generated folders never show up as changes, wherever they end up on a machine.
 
 # OS / editors
 .DS_Store
@@ -10,7 +12,38 @@
 .env
 .env.*
 !.env.example
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Dependencies
+node_modules/
+vendor/
+**/Pods/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Build output
+build/
+.gradle/
+local.properties
+DerivedData/
+*.hmap
+*.ipa
+*.jsbundle
+*.xcuserstate
+xcuserdata/
+**/.xcode.env.local
+.metro-health-check*
+
+# Tests and logs
+coverage/
+*.log
+npm-debug.log
+yarn-error.log
 
 # Scratch
 /tmp/
-*.log
