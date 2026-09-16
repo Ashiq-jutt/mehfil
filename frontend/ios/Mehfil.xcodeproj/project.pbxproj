@@ -7,18 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0835558FBAFB4DDA977E771A /* Fredoka-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1B05234227DD4FBDA59CBAE5 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */; };
+		202232EE1B4945BF8C614485 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */; };
+		4EB5473BE2F441F691CB5460 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7D616375652740C7B8B1AB1E /* Fredoka-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8232F3D3B4E36B54AF3561A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		B8AD7758612A53EA1D5587B5 /* Pods_Mehfil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7FDA486D04FA41444C174E0 /* Pods_Mehfil.framework */; };
 		E5B3B37C4B034F178F4E8180 /* Fredoka-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41B2D07462724BEC9E0C0AEC /* Fredoka-SemiBold.ttf */; };
-		7D616375652740C7B8B1AB1E /* Fredoka-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */; };
-		0835558FBAFB4DDA977E771A /* Fredoka-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */; };
-		4EB5473BE2F441F691CB5460 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */; };
 		FDCAC153564340459638E21E /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E7BE0B75B5C242BAAF4BBD03 /* Nunito-Bold.ttf */; };
-		1B05234227DD4FBDA59CBAE5 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */; };
-		202232EE1B4945BF8C614485 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,18 +27,18 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Mehfil/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Mehfil/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Mehfil.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mehfil.debug.xcconfig"; path = "Target Support Files/Pods-Mehfil/Pods-Mehfil.debug.xcconfig"; sourceTree = "<group>"; };
+		41B2D07462724BEC9E0C0AEC /* Fredoka-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Fredoka-SemiBold.ttf"; path = "../src/assets/fonts/Fredoka-SemiBold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Mehfil.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mehfil.release.xcconfig"; path = "Target Support Files/Pods-Mehfil/Pods-Mehfil.release.xcconfig"; sourceTree = "<group>"; };
+		740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Fredoka-Medium.ttf"; path = "../src/assets/fonts/Fredoka-Medium.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Mehfil/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Mehfil/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Fredoka-Bold.ttf"; path = "../src/assets/fonts/Fredoka-Bold.ttf"; sourceTree = "<group>"; };
+		A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraBold.ttf"; path = "../src/assets/fonts/Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
+		B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Regular.ttf"; path = "../src/assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; };
 		D7FDA486D04FA41444C174E0 /* Pods_Mehfil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mehfil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E7BE0B75B5C242BAAF4BBD03 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Bold.ttf"; path = "../src/assets/fonts/Nunito-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		41B2D07462724BEC9E0C0AEC /* Fredoka-SemiBold.ttf */ = {isa = PBXFileReference; name = "Fredoka-SemiBold.ttf"; path = "../src/assets/fonts/Fredoka-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */ = {isa = PBXFileReference; name = "Fredoka-Bold.ttf"; path = "../src/assets/fonts/Fredoka-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */ = {isa = PBXFileReference; name = "Fredoka-Medium.ttf"; path = "../src/assets/fonts/Fredoka-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */ = {isa = PBXFileReference; name = "Nunito-SemiBold.ttf"; path = "../src/assets/fonts/Nunito-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		E7BE0B75B5C242BAAF4BBD03 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; name = "Nunito-Bold.ttf"; path = "../src/assets/fonts/Nunito-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */ = {isa = PBXFileReference; name = "Nunito-Regular.ttf"; path = "../src/assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Nunito-ExtraBold.ttf"; path = "../src/assets/fonts/Nunito-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-SemiBold.ttf"; path = "../src/assets/fonts/Nunito-SemiBold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +72,21 @@
 				D7FDA486D04FA41444C174E0 /* Pods_Mehfil.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3E23054A431A454A9FF0A84D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				41B2D07462724BEC9E0C0AEC /* Fredoka-SemiBold.ttf */,
+				836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */,
+				740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */,
+				F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */,
+				E7BE0B75B5C242BAAF4BBD03 /* Nunito-Bold.ttf */,
+				B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */,
+				A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -112,21 +127,6 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
-		};
-		3E23054A431A454A9FF0A84D /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				41B2D07462724BEC9E0C0AEC /* Fredoka-SemiBold.ttf */,
-				836F1E6A7CBF4CE5957953F1 /* Fredoka-Bold.ttf */,
-				740D9E7209704D6F9CC1AD18 /* Fredoka-Medium.ttf */,
-				F24300009ECC48F1BF4E4303 /* Nunito-SemiBold.ttf */,
-				E7BE0B75B5C242BAAF4BBD03 /* Nunito-Bold.ttf */,
-				B907594D8C554DBC8F7AEB5F /* Nunito-Regular.ttf */,
-				A9A847B6882D48E9A299FBC3 /* Nunito-ExtraBold.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
